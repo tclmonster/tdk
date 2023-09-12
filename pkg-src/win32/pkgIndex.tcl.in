@@ -1,0 +1,12 @@
+# -*- tcl -*-
+# Tcl package index file, version 1.1
+#
+if {[package vsatisfies [package provide Tcl] 9.0-]} {
+    package ifneeded win32 @PACKAGE_VERSION@ \
+	    [list load [file join $dir @PKG_LIB_FILE@]]
+} else {
+    # Note: "win32" is hardcoded here to satisfy the exported symbols
+    # baked in the so/dll.
+    package ifneeded win32 @PACKAGE_VERSION@ \
+	    [list load [file join $dir @PKG_LIB_FILE@]]
+}
