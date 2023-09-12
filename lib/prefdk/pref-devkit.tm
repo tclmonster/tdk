@@ -123,9 +123,7 @@ proc ::pref::devkit::init {} {
 
     ::pref::groupInit GlobalFactory [list \
 	 pkgRepositoryList    $repos {} \
-	 pkgRepositoryMRUList [list \
-				   [::repository::sys::activestate] \
-				  ] {} \
+	 pkgRepositoryMRUList [list] {} \
 	 pkgSearchPathList    $tap {} \
 	 pkgSearchPathMRUList {} {} \
 	 prefixPath           {} {} \

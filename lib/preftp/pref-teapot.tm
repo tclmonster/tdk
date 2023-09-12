@@ -115,7 +115,7 @@ proc ::pref::teapot::init {} {
 	    TeapotFactory \
 	    [list \
 		 defaultInstallation [repository::sys::userdir]            {} \
-		 archivesList        [list [repository::sys::activestate]] {} \
+		 archivesList        [list] {} \
 		 localCache          {}                                    {} \
 		 ignorePatternList   {CVS}                                 {} \
 		]
@@ -125,7 +125,7 @@ proc ::pref::teapot::init {} {
 	TeapotFactory \
 	[list \
 	     defaultInstallation [repository::sys::userdir]            {} \
-	     archivesList        [list [repository::sys::activestate]] {} \
+	     archivesList        [list] {} \
 	     localCache          [repository::sys::cachedir]           {} \
 	     watchWorkspace      [repository::sys::watchworkspacedir]  {} \
 	     watchDestination    {}                                    {} \

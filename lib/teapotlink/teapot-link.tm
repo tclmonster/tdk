@@ -329,8 +329,8 @@ namespace eval ::teapot::link {
 	# TEAPOT LINK BOOT BEGIN -*- tcl -*-
 	# Copyright (C) 2006-2007 ActiveState Software Inc.
 	if {![interp issafe] && ![catch {package require platform}]} {
-	    package require activestate::teapot::link
-	    ::activestate::teapot::link::setup
+	    package require teapot::link
+	    ::teapot::link::setup
 	}
 	# TEAPOT LINK BOOT END
     }
@@ -341,7 +341,7 @@ namespace eval ::teapot::link {
 	# ### ### ### ######### ######### #########
 
 	# @@ Meta Begin
-	# Package ::activestate::teapot::link 1.2
+	# Package ::teapot::link 1.2
 	# Meta platform    tcl
 	# Meta summary     Linking Tcl shells with local transparent Teapot repositories
 	# Meta description Teapot support functionality.
@@ -359,12 +359,12 @@ namespace eval ::teapot::link {
 	## Requisites
 
 	package require platform
-	namespace eval ::activestate::teapot::link {}
+	namespace eval ::teapot::link {}
 
 	# ### ### ### ######### ######### #########
 	## Implementation
 
-	proc ::activestate::teapot::link::setup {} {
+	proc ::teapot::link::setup {} {
 	    # The database "teapot.txt" is a text file, containing one
 	    # repository path per line. It is allowed to be absent, if no
 	    # repositories are linked to the shell at all.
@@ -401,8 +401,8 @@ namespace eval ::teapot::link {
 	    usel $repositories
 	}
 
-	proc ::activestate::teapot::link::use {args} {usel $args}
-	proc ::activestate::teapot::link::usel {repositories} {
+	proc ::teapot::link::use {args} {usel $args}
+	proc ::teapot::link::usel {repositories} {
 
 	    # Make all repository subdirectories available which can contain
 	    # packages for the architecture currently executing this Tcl
@@ -444,7 +444,7 @@ namespace eval ::teapot::link {
 	# ### ### ### ######### ######### #########
 	## Ready
 
-	package provide activestate::teapot::link 1.1
+	package provide teapot::link 1.1
     }
 }
 
