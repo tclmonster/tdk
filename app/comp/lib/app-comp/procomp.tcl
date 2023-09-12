@@ -375,18 +375,8 @@ proc procomp::init { {argList {}} } {
 
     if {$projectInfo::printCopyright} {
 	set logProc defaultLogProc
-	set userinfo [compiler::tdk_license user-name]
-	set useremail [compiler::tdk_license user-email]
-	if {$useremail ne ""} {
-	    append userinfo " <$useremail>"
-	}
 	log "# Tcl Dev Kit Compiler"
 	log "# Copyright (C) 2001-2009 ActiveState Software Inc. All rights reserved."
-	log "# [compiler::tdk_license type] license for $userinfo."
-	set e [compiler::tdk_license expiration-date]
-	if {$e != {}} {
-	    log "# Expires: [compiler::tdk_license expiration-date]."
-	}
     }
 
     if {!$isVerbose} {
@@ -823,60 +813,3 @@ proc ::procomp::LoadConfig {infile cfgfilesvar} {
     return [config::ConvertToOptions $cfg $tool]
 }
 
-
-proc procomp::bomb {} {
-    variable code_bomb
-    global env
-
-    set expiry [compiler::tdk_license expiration-date]
-    if {$expiry eq ""} {
-	return
-    }
-
-    foreach {d m y} [split $expiry -] { break }
-    set expiry ${y}-${m}-${d} ; # ISO form.
-    set seconds [clock scan   $expiry]
-    set expiry  [clock format $seconds]
-
-    set user [compiler::tdk_license user-name]
-    set mail [compiler::tdk_license user-email]
-    if {$mail ne ""} {
-	append user " <$mail>"
-    }
-
-    set map [list @seconds@ $seconds @user@ $user]
-    set code_bomb [string map $map {
-
-	if {[clock seconds] > @seconds@} {
-	    set    msg ""
-	    append msg "| This application has been generated with an evaluation license of the" \n
-	    append msg "| Tcl Dev Kit 'tclcompiler' utility.  The evaluation license has expired" \n
-	    append msg "| now.  Please contact the author of this application for a non-expiring" \n
-	    append msg "| version of the program: @user@." \n
-
-	    if {![catch {package require Tk}]} {
-		# We can use Tk, so we do.
-
-		tk_messageBox \
-			-icon    error \
-			-title   "Expired trial license" \
-			-type    ok \
-			-message $msg
-	    } else {
-		# Falling back to writing the message to stderr.
-		# This should always work.
-
-		puts -nonewline stderr $msg
-	    }
-	    exit
-	    return
-	}
-    }] ; # {}
-
-    # We don't do more with the bomb here, it will later be integrated
-    # into each compiled file.
-    return
-}
- 
-# Initialize the timebomb, if any.
-procomp::bomb

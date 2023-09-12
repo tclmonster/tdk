@@ -28,9 +28,11 @@ if {"unwrapped" eq [starkit::startup]} {
 
     # External standard actions
     source [file join $self app main_std.tcl]
+    set startup [file join $self app check lib app-check check_startup.tcl]
 } else {
     # Wrapped standard actions.
     source [file join $starkit::topdir ms.tcl]
+    set startup [file join $self lib app-check check_startup.tcl]
 }
 
-go [file join $self lib app-check check_startup.tcl]
+go $startup

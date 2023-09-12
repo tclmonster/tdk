@@ -32,11 +32,12 @@ if {"unwrapped" eq [starkit::startup]} {
     package require splash
     splash::configure -message DEVEL
     splash::configure -imagefile [file join $self artwork/splash.png]
+    set startup [file join $self app tape lib app-tape tape_startup.tcl]
 } else {
     # Wrapped standard actions.
     source [file join $starkit::topdir ms.tcl]
+    set startup [file join $self lib app-tape tape_startup.tcl]
 }
 
-set startup [file join $self app tape lib app-tape tape_startup.tcl]
 set ::argv0 $startup
 go          $startup

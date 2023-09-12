@@ -32,9 +32,11 @@ if {"unwrapped" eq [starkit::startup]} {
     package require splash
     splash::configure -message DEVEL
     splash::configure -imagefile [file join $self artwork/splash.png]
+    set startup [file join $self app comp lib app-comp comp_startup.tcl]
 } else {
     # Wrapped standard actions.
     source [file join $starkit::topdir ms.tcl]
+    set startup [file join $self lib app-comp comp_startup.tcl]
 }
 
 # ### ### ### ######### ######### #########
@@ -47,7 +49,7 @@ if {"unwrapped" eq [starkit::startup]} {
 ## nightmare. For now only Tclx is known to define new math functions,
 ## and is safe, so we go for the hack.
 
-# This is done by 'go' as well, but comes to late for Tclx.
+# This is done by 'go' as well, but comes too late for Tclx.
 global auto_path
 foreach d $auto_path {
     foreach pd [glob -nocomplain -directory $d P-*] {
@@ -62,4 +64,4 @@ package require Tclx
 
 # Hand over to the actual application.
 
-go [file join $self lib app-comp comp_startup.tcl]
+go $startup
