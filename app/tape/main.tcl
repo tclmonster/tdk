@@ -37,6 +37,6 @@ if {"unwrapped" eq [starkit::startup]} {
     source [file join $starkit::topdir ms.tcl]
 }
 
-set startup [file join $self lib app-tape tape_startup.tcl]
+set startup [file join $self app tape lib app-tape tape_startup.tcl]
 set ::argv0 $startup
 go          $startup

@@ -14,20 +14,6 @@
 # ==================================================================================
 # ==================================================================================
 
-if {[catch {
-    package require compiler
-    compiler::tdk_license user-name
-} err]} {
-    # Compiler package missing, we cannot work - No license.
-    wm withdraw .
-    if {![string match "*license*" $err]} {
-	set err "Failed license check"
-    }
-    tk_messageBox -icon error -title "Invalid License" \
-	    -type ok -message $err
-    exit 1
-}
-
 package require tapscan
 
 # ==================================================================================
