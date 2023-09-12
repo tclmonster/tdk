@@ -4,6 +4,14 @@
 # TDK launcher - Windows only
 # Dispatches .tdk .tpj to the appropriate tools.
 
+set self [file dirname [file dirname [file dirname [file normalize [info script]]]]]
+
 package require starkit
+if {"unwrapped" eq [starkit::startup]} {
+    lappend auto_path [file join $self lib]
+    # External standard actions
+    source [file join $self app main_std.tcl]
+    puts stderr unwrapped\n[join $auto_path \n\t]
+}
 starkit::startup
 package require app-launch
