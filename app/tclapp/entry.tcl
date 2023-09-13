@@ -20,7 +20,6 @@
 # Dump stack
 #source [file join [pwd] [file dirname [file dirname [info script]]] dump_stack.tcl]
 
-
 package require starkit
 if {![info exists ::starkit::mode] || ("unwrapped" eq $::starkit::mode)} {
     # Unwrapped call is during build - tap scan/generate.  Other
@@ -31,8 +30,9 @@ if {![info exists ::starkit::mode] || ("unwrapped" eq $::starkit::mode)} {
     # package locations.
 
     starkit::startup
-    lappend auto_path [file join [file dirname [file dirname $starkit::topdir]] devkit lib]
-    lappend auto_path [file join [file dirname [file dirname $starkit::topdir]] lib]
+    set appRoot [file dirname [file dirname $starkit::topdir]]
+    lappend auto_path [file join $appRoot devkit lib]
+    lappend auto_path [file join $appRoot lib]
 #    lappend auto_path ~/TDK/lib
 #    tcl::tm::roots ~/TDK/lib
 
@@ -49,8 +49,7 @@ if {![info exists ::starkit::mode] || ("unwrapped" eq $::starkit::mode)} {
 
     package require splash
     splash::configure -message DEVEL
-    # splash::configure -imagefile ~/Abuild/images/splash.png
-    splash::configure -imagefile [file join $starkit::topdir data tcllogo.gif]
+    splash::configure -imagefile [file join $appRoot artwork splash.png]
 } else {
     # Wrapped standard actions.
     source [file join $starkit::topdir ms.tcl]
