@@ -123,7 +123,7 @@ proc ::help::WinOpen {} {
     if {$file == {}} return
 
     if 1 {
-	WinOpenUrl "mk:@MSITStore:[file nativename $file]::/${page}.html"
+	WinOpenUrl "[file nativename $file]"
     } else {
 	WinOpenUrl "mk:@MSITStore:[file nativename $file]::/tdk.index.html?page=${page}.html"
     }
@@ -210,7 +210,6 @@ proc ::help::UnixOpenUrl {url} {
     return
 }
 
-
 proc help::LocateFile {fname} {
     variable DIR
     variable appname
@@ -230,9 +229,14 @@ proc help::LocateFile {fname} {
 				    [glob -nocomplain -directory $docdir \
 					 $pattern]] end]]
     } else {
-	set dirs [list \
-		      [file join [file dirname $DIR(EXE)] doc] \
-		      [file join [file dirname $DIR(SCRIPT)] doc]]
+        set dirs [list \
+                [file join [file dirname $DIR(EXE)] doc] \
+                [file join [file dirname $DIR(SCRIPT)] doc]]
+
+        if {"unwrapped" eq $starkit::mode} {
+            lappend dirs [file join [file dirname [file dirname $DIR(SCRIPT)]] \
+                docs official-help-files]
+        }
     }
 
     foreach dir $dirs {
