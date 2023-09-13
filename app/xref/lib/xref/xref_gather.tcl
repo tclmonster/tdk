@@ -9,7 +9,7 @@
 
 package require snit
 package require fileutil
-package require Memchan
+package require tcl::chan::memchan
 
 ## ::selfapp required
 
@@ -62,7 +62,7 @@ snit::type ::xref_gather {
     }
 
     method Run {files} {
-	package require Memchan
+	package require tcl::chan::memchan
 
 	set tmpfile [fileutil::tempfile tdkxref_]
 	set infile  [fileutil::tempfile tdkxrin_]
