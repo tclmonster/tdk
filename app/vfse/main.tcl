@@ -26,10 +26,12 @@ if {"unwrapped" eq [starkit::startup]} {
     package require splash
     splash::configure -message DEVEL
     splash::configure -imagefile [file join $self artwork/splash.png]
+    set startup [file join $self app vfse lib app-vfse vfse.tcl]
 } else {
     # Wrapped standard actions.
     source [file join $starkit::topdir ms.tcl]
+    set startup [file join $self lib app-vfse vfse.tcl]
 }
 
 set basepwd [pwd] ;# For vfse.tcl, cmd 'startup'
-go [file join $self lib app-vfse vfse.tcl]
+go $startup
