@@ -59,6 +59,24 @@ namespace eval ::tclapp::wrapengine {}
 #	Upon completion of this routine the native filesystem contains
 #	a starkit or starpack filled with the files specified on the command line.
 
+proc tclapp::wrapengine::ReadLicenseFile {} {
+    # Unwrapped invocation of TclApp occurs two levels down
+    if {"unwrapped" eq $::starkit::mode} {
+        set path [file join [file dirname \
+            [file dirname $starkit::topdir]] LICENSE]
+
+    } else {
+        set path [file join $starkit::topdir LICENSE]
+    }
+
+    set file      [open $path r]
+    set raw       [read $file]
+    set commented [join [lmap line [split $raw "\n"] {string cat "# " $line}] "\n"]
+    catch {close $licenseFile}
+
+    return [list raw $raw commented $commented]
+}
+
 proc tclapp::wrapengine::run {ev} {
     upvar 1 $ev errors
 
@@ -72,7 +90,7 @@ proc tclapp::wrapengine::run {ev} {
     }
 
     set compressionState [SetCompression]
-    set license          BSD
+    array set license [ReadLicenseFile]
 
     Mount $kitfile errors
     if {[llength  $errors]} {
@@ -83,12 +101,12 @@ proc tclapp::wrapengine::run {ev} {
 
     InsertMetadata $kitfile
 
-    WrapPackages  $kitfile                    pkgdirs
-    WrapFilesInto $kitfile $license
-    LicenseAdd    $kitfile $license
+    WrapPackages  $kitfile pkgdirs
+    WrapFilesInto $kitfile $license(commented)
+    LicenseAdd    $kitfile $license(raw)
 
     if {[tclapp::misc::specials?]} {
-	CreateWrapMainFile $kitfile $license $pkgdirs
+	CreateWrapMainFile $kitfile $license(commented) $pkgdirs
     }
 
     Unmount       $kitfile
@@ -628,17 +646,10 @@ proc tclapp::wrapengine::Unmount {kitfile} {
 
 proc tclapp::wrapengine::LicenseAdd {kitfile license} {
 
-    # Information about the license ... Separate file, and also
-    # appended to standard files if present (config.tcl, boot.tcl).
+    # Information about the license ...
 
-    fileutil::writeFile [file join $kitfile ORIGIN.txt] $license
+    fileutil::writeFile [file join $kitfile TDK_LICENSE.txt] $license
 
-    foreach f {boot.tcl config.tcl} {
-	set fx [file join $kitfile $f]
-	if {[file exists $fx]} {
-	    fileutil::appendToFile $fx $license
-	}
-    }
     return
 }
 
@@ -668,6 +679,7 @@ proc tclapp::wrapengine::CreateWrapMainFile {kitdir license pkgdirs} {
     puts  $f "## Creator  : Tcl Dev Kit TclApp"
     puts  $f "## Created @: [clock format [clock seconds]]"
     puts  $f "## User     : $tcl_platform(user)"
+    puts  $f ""
     puts  $f $license
     puts  $f ""
 
