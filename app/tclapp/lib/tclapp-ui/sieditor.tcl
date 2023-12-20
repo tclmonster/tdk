@@ -280,7 +280,7 @@ snit::widget sieditor {
 	# there is something to insert (in)to.
 
 	if {[info exists origin(CompanyName)]} {
-	    set origin(CompanyName) $tcl_platform(user)@[info hostname]
+	    set origin(CompanyName) $::tcl_platform(user)@[info hostname]
 	}
 	return
     }
