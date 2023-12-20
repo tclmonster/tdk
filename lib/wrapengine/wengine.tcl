@@ -975,7 +975,7 @@ proc tclapp::wrapengine::WrapFilesInto {kitfile license} {
 	if {$first} {::log::log info " " ; set first 0}
 	if {[llength $files] > 0} {
 	    NoteSection $dir
-	    WrapSection $dir $files $license $kitfile
+	    WrapSection $dir $files "" $kitfile
 	}
     }
     RunDeferedCompile
