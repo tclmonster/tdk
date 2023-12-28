@@ -1,31 +1,49 @@
 # @configure_input@
 
-# Package-specific substitution variables
-package = @PACKAGE_NAME@
-version = @PACKAGE_VERSION@
-tarname = @PACKAGE_TARNAME@
-distdir = $(tarname)-$(version)
+top_builddir = @abs_top_builddir@
+srcdir       = @srcdir@
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+bindir       = @bindir@
+libdir       = @libdir@
+includedir   = @includedir@
+datarootdir  = @datarootdir@
+runstatedir  = @runstatedir@
+datadir      = @datadir@
+mandir       = @mandir@
 
-# Package-specific subst. variables
-prefix	    = @prefix@
-exec_prefix = @exec_prefix@
-bindir	    = @bindir@
+VPATH = @srcdir@
 
-# VPATH-Specific subst. variables
-srcdir = @srcdir@
-VPATH =  @srcdir@
+INSTALL_OPTIONS  =
+INSTALL          = @INSTALL@ $(INSTALL_OPTIONS)
+INSTALL_DATA_DIR = @INSTALL_DATA_DIR@
+INSTALL_DATA     = @INSTALL_DATA@
+INSTALL_PROGRAM  = @INSTALL_PROGRAM@
+INSTALL_SCRIPT   = @INSTALL_SCRIPT@
+INSTALL_LIBRARY  = @INSTALL_LIBRARY@
 
-# Tool-Specific subst. variables
-CC       = @CC@
-libs     = @LIBS@
-CFLAGS   = @CFLAGS@
-CPPFLAGS = @CPPFLAGS@
-INSTALL         = @INSTALL@
-INSTALL_DATA    = @INSTALL_DATA@
-INSTALL_PROGRAM = @INSTALL_PROGRAM@
-INSTALL_SCRIPT  = @INSTALL_SCRIPT@
+PACKAGE_NAME    = @PACKAGE_NAME@
+PACKAGE_VERSION = @PACKAGE_VERSION@
+PACKAGE_TARNAME = @PACKAGE_TARNAME@
 
-all: tclcompiler tclparser
+TCL_BIN_DIR	= @TCL_BIN_DIR@
+TCL_SRC_DIR	= @TCL_SRC_DIR@
+#TK_BIN_DIR	= @TK_BIN_DIR@
+#TK_SRC_DIR	= @TK_SRC_DIR@
+
+EXTRA_PATH  = $(top_builddir):$(TCL_BIN_DIR):$(TCL_BIN_DIR)/../bin
+#EXTRA_PATH = $(top_builddir):$(TCL_BIN_DIR):$(TK_BIN_DIR)
+TCLLIBPATH  = $(top_builddir)
+TCLSH_ENV   = TCL_LIBRARY=`@CYGPATH@ $(TCL_SRC_DIR)/library`
+
+PKG_ENV = @LD_LIBRARY_PATH_VAR@="$(EXTRA_PATH):$(@LD_LIBRARY_PATH_VAR@)" \
+	PATH="$(EXTRA_PATH):$(PATH)" \
+	TCLLIBPATH="$(TCLLIBPATH)"
+
+TCLSH_PROG = @TCLSH_PROG@
+TCLSH      = $(TCLSH_ENV) $(PKG_ENV) $(TCLSH_PROG)
+
+all: tclcompiler tclparser apps
 
 tclcompiler:
 	cd lib/tclcompiler && $(MAKE) all
@@ -33,44 +51,15 @@ tclcompiler:
 tclparser:
 	cd lib/tclparser && $(MAKE) all
 
+apps: apps/tclapp
+
+apps/tclapp:
+	mkdir apps
+	$(TCLSH) `@CYGPATH@ $(srcdir)/app/tclapp/entry.tcl`
+
 clean:
 	cd lib/tclcompiler && $(MAKE) $@
 	cd lib/tclparser   && $(MAKE) $@
-
-#dist: $(distdir).tar.gz
-#
-#$(distdir).tar.gz: $(distdir)
-#	tar chof - $(distdir) | gzip -9 -c > $@
-#	rm -rf $(distdir)
-#
-#$(distdir): FORCE
-#	mkdir -p $(distdir)/src
-#	cp $(srcdir)/configure.ac $(distdir)
-#	cp $(srcdir)/configure    $(distdir)
-#	cp $(srcdir)/config.h.in  $(distdir)
-#	cp $(srcdir)/install-sh   $(distdir)
-#	cp $(srcdir)/Makefile.in  $(distdir)
-#	cp $(srcdir)/src/Makefile.in $(srcdir)/src/main.c $(distdir)/src
-#
-#FORCE:
-#	-rm $(distdir).tar.gz >/dev/null 2>&1
-#	rm -rf $(distdir)
-#
-#distcheck: $(distdir).tar.gz
-#	gzip -cd $(distdir).tar.gz | tar xvf -
-#	cd $(distdir) && ./configure
-#	cd $(distdir) && $(MAKE) all
-#	cd $(distdir) && $(MAKE) check
-#	cd $(distdir) && $(MAKE) DESTDIR=$${PWD}/inst install
-#	cd $(distdir) && $(MAKE) DESTDIR=$${PWD}/inst uninstall
-#	@remaining="`find $(distdir)/inst -type f | wc -l`"; \
-#	if test "$${remaining}" -ne 0; then \
-#		echo "*** $${remaining} file(s) remaining in stage directory!"; \
-#		exit 1; \
-#	fi
-#	cd $(distdir) && $(MAKE) clean
-#	rm -rf $(distdir)
-#	@echo "*** Package $(distdir).tar.gz is ready for distribution."
 
 Makefile: $(srcdir)/Makefile.in config.status
 	./config.status $@
@@ -80,4 +69,4 @@ config.status: configure
 
 #.PHONY: FORCE all clean check dist distcheck install uninstall
 
-.PHONY: all clean
+.PHONY: all apps clean
