@@ -1,0 +1,24 @@
+
+AC_INIT([tcl-dev-kit], [7.0])
+
+TEA_INIT([3.7])
+
+AC_CONFIG_SRCDIR([app/tclapp/entry.tcl])
+
+TEA_PATH_TCLCONFIG
+TEA_LOAD_TCLCONFIG
+
+#TEA_PATH_TKCONFIG
+#TEA_LOAD_TKCONFIG
+
+TEA_PREFIX
+
+TEA_SETUP_COMPILER
+
+AC_CONFIG_SUBDIRS([
+  lib/tclcompiler
+  lib/tclparser
+])
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
