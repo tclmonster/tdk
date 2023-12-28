@@ -3,8 +3,6 @@ AC_INIT([tcl-dev-kit], [7.0])
 
 TEA_INIT([3.7])
 
-AC_CONFIG_SRCDIR([app/tclapp/entry.tcl])
-
 TEA_PATH_TCLCONFIG
 TEA_LOAD_TCLCONFIG
 
