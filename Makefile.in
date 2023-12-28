@@ -28,14 +28,14 @@ INSTALL_SCRIPT  = @INSTALL_SCRIPT@
 all: tclcompiler tclparser
 
 tclcompiler:
-	cd $(srcdir)/lib/tclcompiler && $(MAKE) all
+	cd lib/tclcompiler && $(MAKE) all
 
 tclparser:
-	cd $(srcdir)/lib/tclparser && $(MAKE) all
+	cd lib/tclparser && $(MAKE) all
 
 clean:
-	cd $(srcdir)/lib/tclcompiler && $(MAKE) $@
-	cd $(srcdir)/lib/tclparser && $(MAKE) $@
+	cd lib/tclcompiler && $(MAKE) $@
+	cd lib/tclparser   && $(MAKE) $@
 
 #dist: $(distdir).tar.gz
 #
