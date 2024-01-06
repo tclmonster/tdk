@@ -20,7 +20,7 @@ if {[string compare test [info procs test]] == 1} {
 
 catch {parse} parseMsg
 if {[regexp "invalid command" $parseMsg]} {
-    package require parser
+    package require tclparser
 }
 
 foreach file {location.tcl analyzer.tcl context.tcl userproc.tcl \

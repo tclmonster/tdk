@@ -15,7 +15,7 @@
 # RCS: @(#) $Id: tclapp.tcl,v 1.7 2001/02/08 21:44:30 welch Exp $
 
 package require cmdline
-package require compiler
+package require tclcompiler
 package require csv
 package require fileutil
 package require log

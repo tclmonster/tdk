@@ -12,7 +12,7 @@
 #
 # RCS: @(#) $Id: tclapp.tcl,v 1.7 2001/02/08 21:44:30 welch Exp $
 
-package require compiler
+package require tclcompiler
 
 namespace eval ::tclapp::banner {}
 

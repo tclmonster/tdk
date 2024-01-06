@@ -20,7 +20,7 @@
 
 package require instrument ; # Engine: Instrument tcl code.
 package require nub        ; # Engine: Get the nub sources.
-package require parser     ; # Parsing Tcl code
+package require tclparser     ; # Parsing Tcl code
 package require snit       ; # OO system of choice
 package require util       ; # Utilities, 'kill' in particular.
 package require log        ; # Logging and Tracing

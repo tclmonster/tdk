@@ -674,7 +674,7 @@ proc ::teapot::package::gen::FileDict {p top} {
 
 proc ::teapot::package::gen::Compile {p} {
     upvar 1 config config
-    package require compiler
+    package require tclcompiler
 
     set     preamble {}
     lappend preamble {#}

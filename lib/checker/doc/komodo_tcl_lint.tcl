@@ -27,7 +27,7 @@ if {0} {
 
 # Initialize the checker library
 
-package require parser
+package require tclparser
 package require cmdline
 
 ## package require projectInfo                         ##

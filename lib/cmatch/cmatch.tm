@@ -35,7 +35,7 @@
 # ### ### ### ######### ######### #########
 ## Requisites
 
-package require parser ; # Use Tcl itself for the parsing of code.
+package require tclparser ; # Use Tcl itself for the parsing of code.
 package require logger
 
 logger::initNamespace ::cmatch

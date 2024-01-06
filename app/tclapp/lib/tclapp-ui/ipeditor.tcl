@@ -16,7 +16,7 @@
 package require snit              ; # Tcllib, OO core.
 package require tipstack
 package require tile
-package require compiler          ; # License information
+package require tclcompiler          ; # License information
 package require teapot::metadata::read
 package require image ; image::file::here
 

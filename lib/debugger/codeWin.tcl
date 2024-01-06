@@ -11,7 +11,7 @@
 # 
 # SCCS: @(#) codeWin.tcl 1.16 98/05/02 14:01:16
 
-package require parser
+package require tclparser
 package require fmttext
 
 if {[package vcompare 8.3 [package present Tk]] < 0} {

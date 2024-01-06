@@ -61,7 +61,7 @@ namespace eval ::ttk {
 }
 
 # Do license check
-if {[catch {package require compiler; compiler::tdk_license user-name} err]} {
+if {[catch {package require tclcompiler; compiler::tdk_license user-name} err]} {
     wm withdraw .
     if {![string match "*license*" $err]} {
 	set err "Failed license check"

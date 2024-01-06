@@ -11,7 +11,7 @@
 #
 # RCS: @(#) $Id: tclapp.tcl,v 1.7 2001/02/08 21:44:30 welch Exp $
 
-if {[catch {package require compiler}]} {
+if {[catch {package require tclcompiler}]} {
     # Compiler package missing, we cannot work.
     exit
 }

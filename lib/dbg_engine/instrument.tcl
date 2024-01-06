@@ -12,7 +12,7 @@
 # RCS: @(#) $Id: instrument.tcl,v 1.7 2001/10/17 18:08:33 andreas_kupries Exp $
 
 
-package require parser
+package require tclparser
 
 package provide instrument 1.0
 namespace eval instrument {

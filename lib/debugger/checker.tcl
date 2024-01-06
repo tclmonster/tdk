@@ -15,7 +15,7 @@
 
 package require snit     ; # Tcllib | OO system
 package require fileutil ; # Tcllib | temp. file
-package require parser
+package require tclparser
 package require tlocate
 
 # ### ### ### ######### ######### #########

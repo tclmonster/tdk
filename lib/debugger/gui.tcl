@@ -14,7 +14,7 @@
 # ### ### ### ######### ######### #########
 ## Requisites
 
-package require parser
+package require tclparser
 package require tile
 package require BWidget ; Widget::theme 1 ; # use themed widgets in BWidgets
 package require ui_engine ;# Pane per engine.

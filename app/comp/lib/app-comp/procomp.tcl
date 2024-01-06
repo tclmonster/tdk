@@ -23,7 +23,7 @@
 # RCS: @(#) $Id: procomp.tcl,v 1.4 2001/02/08 21:40:55 welch Exp $
 
 package require Tcl 8.0
-package require compiler 1.0 ; # TclPro/AS | Compiler itself
+package require tclcompiler 1.0 ; # TclPro/AS | Compiler itself
 package require fileutil     ; # Tcllib    | File utilities (tmpfile)
 package require csv          ; # Tcllib    | CSV processing (See LoadConfig).
 

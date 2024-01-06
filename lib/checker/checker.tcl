@@ -17,7 +17,7 @@ package provide checker 1.4
 # Get the required packages...
 # This package imports the "parse" command.
 
-package require parser
+package require tclparser
 
 namespace eval checker {
     variable libdir [file dirname [info script]]

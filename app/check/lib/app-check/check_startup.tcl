@@ -33,7 +33,7 @@ if {[string match -psn* [lindex $::argv 0]]} {
 package require log
 ::log::lvSuppress debug
 
-package require parser
+package require tclparser
 package require cmdline
 package require starkit
 

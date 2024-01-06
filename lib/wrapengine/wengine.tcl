@@ -9,7 +9,7 @@
 # 
 # RCS: @(#) $Id: startup.tcl,v 1.5 2001/01/24 19:41:24 welch Exp $
 
-package require compiler
+package require tclcompiler
 package require fileutil
 package require log
 package require osx::bundle::app

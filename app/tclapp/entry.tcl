@@ -36,7 +36,7 @@ if {![info exists ::starkit::mode] || ("unwrapped" eq $::starkit::mode)} {
 #    lappend auto_path ~/TDK/lib
 #    tcl::tm::roots ~/TDK/lib
 
-    package require compiler
+    package require tclcompiler
 
     #package require teapot::link
     #::teapot::link::use ~/Abuild/lib/teapot-build
