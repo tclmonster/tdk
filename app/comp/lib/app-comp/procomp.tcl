@@ -232,7 +232,7 @@ proc procomp::setErrorProc { procName } {
 
 proc procomp::init { {argList {}} } {
     variable headerType
-    variable byteCodeExtension [compiler::getBytecodeExtension]
+    variable byteCodeExtension [::tclcompiler::getBytecodeExtension]
     variable fileList
     variable headerValue
     catch {unset headerValue}
@@ -533,7 +533,7 @@ proc procomp::fileCompile { path {outputFile {}} } {
     variable forceWrite
     variable code_bomb
 
-    set cmd ::compiler::compile
+    set cmd ::tclcompiler::compile
 
     # Get the preamble if any
 

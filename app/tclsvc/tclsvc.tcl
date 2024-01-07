@@ -60,16 +60,6 @@ namespace eval ::ttk {
 	-foreground {invalid \#FF0000}
 }
 
-# Do license check
-if {[catch {package require tclcompiler; compiler::tdk_license user-name} err]} {
-    wm withdraw .
-    if {![string match "*license*" $err]} {
-	set err "Failed license check"
-    }
-    tk_messageBox -icon error -title "Invalid License" -type ok -message $err
-    exit 1
-}
-
 namespace eval ::svc {
     variable VERSION 1.1
     variable DIR

@@ -1216,7 +1216,7 @@ proc ::tclapp::wrapengine::Put {compile license src dst} {
 	set requested [CompileFor]
 
 	if {[catch {
-	    set ctcl [compiler::getTclVer]
+	    set ctcl [::tclcompiler::getTclVer]
 	}]} {
 	    log::log debug "Compiler getTclVer ???, falling back to 8.4"
 	    set ctcl 8.4
@@ -1228,7 +1228,7 @@ proc ::tclapp::wrapengine::Put {compile license src dst} {
 	} {
 	    log::log debug "Compile internal ($requested)"
 
-	    uplevel #0 [list ::compiler::compile -preamble $license $nativesrc $dst]
+	    uplevel #0 [list ::tclcompiler::compile -preamble $license $nativesrc $dst]
 	} else {
 	    variable cprefix
 	    variable compdir
