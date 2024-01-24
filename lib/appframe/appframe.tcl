@@ -44,12 +44,8 @@ set ::debugger::parameters(appType) local       ; # system initialization
 
 namespace eval ::tcldevkit::appframe {
     variable here     $::here
-	if {"unwrapped" eq $::starkit::mode} {
-		variable imagedir [file join $starkit::topdir data images]
-	} else {
-		variable imagedir [file join $starkit::topdir \
-			lib application data images]
-	}
+    variable imagedir $::tcldevkit::imageDir
+
     # This is the Lick the Frog's head, 32x32
     variable icon {
 	iVBORw0KGgoAAAANSUhEUgAAACAAAAAfCAYAAACGVs+MAAAABmJLR0QA/wD/

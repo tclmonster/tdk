@@ -7,15 +7,6 @@
 # - Invokation of the actual application.
 # - (Inactive code for the debugging of the package management, and file sourcery.)
 
-
-# Trace exactly which packages are required during execution
-#source [file join [pwd] [file dirname [file dirname [info script]]] debug_require.tcl]
-
-# Trace exactly which files are read via source.
-#source [file join [pwd] [file dirname [file dirname [info script]]] debug_source.tcl]
-
-set self [file dirname [file dirname [file dirname [file normalize [info script]]]]]
-
 package require starkit
 if {"unwrapped" eq [starkit::startup]} {
     # Unwrapped call is during build - tap scan/generate.  Other
@@ -24,22 +15,33 @@ if {"unwrapped" eq [starkit::startup]} {
     # Hence we use two stanza's to define an externa lib directory.
     # Debug output is allowed, actually sort of wanted to be sure of
     # package locations.
-    
-    lappend auto_path [file join $self lib]
 
     puts stderr unwrapped\n[join $auto_path \n\t]
 
-    # External standard actions
-    source [file join $self app main_std.tcl]
+    # Trace exactly which packages are required during execution
+    #source [file join [pwd] [file dirname [file dirname [info script]]] debug_require.tcl]
 
-    package require splash
-    splash::configure -message DEVEL
-    splash::configure -imagefile [file join $self artwork/splash.png]
-    set startup [file join $self app xref xref.tcl]
+    # Trace exactly which files are read via source.
+    #source [file join [pwd] [file dirname [file dirname [info script]]] debug_source.tcl]
+
+    # Dump loaded packages when exiting the application
+    #source [file join [pwd] [file dirname [file dirname [info script]]] dump_packages.tcl]
+
+    # Dump stack
+    #source [file join [pwd] [file dirname [file dirname [info script]]] dump_stack.tcl]
+
+    lappend auto_path [file join [file dirname [file dirname $::starkit::topdir]] lib]
+
 } else {
-    # Wrapped standard actions.
-    source [file join $starkit::topdir ms.tcl]
-    set startup [file join $self xref.tcl]
+    # Path expected after wrapping with TclApp
+    lappend auto_path [file join $::starkit::topdir lib application lib]
 }
 
+package require tdk_appstartup
+
+package require splash
+splash::configure -message "Tcl Dev Kit XREF"
+splash::configure -imagefile [file join $::tcldevkit::tdkRoot artwork splash.png]
+
+set startup [file join $::tcldevkit::appRoot xref.tcl]
 go $startup
