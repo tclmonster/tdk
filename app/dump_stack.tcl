@@ -4,9 +4,11 @@
 
 proc dumpstack {} {
     set n [info level]
-    puts "$n Levels"
+    set fd [open [file join $::tcldevkit::appRoot dump_stack.txt] a]
+    puts $fd "$n Levels"
     for {set i 0} {$n > 0} {incr i -1 ; incr n -1} {
-	puts [info level $i]
+	puts $fd [info level $i]
+    catch {close $fd}
     }
     exit
 }

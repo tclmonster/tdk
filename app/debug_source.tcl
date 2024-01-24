@@ -5,7 +5,9 @@
 # ----------------------------
 
 rename ::source ::__source
-proc   ::source {args} {
-    puts SOURCE\ [join $args]
+proc ::source {args} {
+    set fd [open [file join $::tcldevkit::appRoot debug_source.txt] a]
+    puts $fd "SOURCE [join $args]"
+    catch {close $fd}
     uplevel 1 ::__source $args
 }

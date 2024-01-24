@@ -7,9 +7,11 @@
 rename ::package ::__package
 proc ::package {args} {
     if {[lindex $args 0] eq "require"} {
-	puts ">>> [info script]"
-	puts "    package $args"
-	puts ""
+    set fd [open [file join $::tcldevkit::appRoot debug_require.txt] a]
+	puts $fd ">>> [info script]"
+	puts $fd "    package $args"
+	puts $fd ""
+    catch {close $fd}
     }
     return [uplevel 1 [linsert $args 0 ::__package]]
 }

@@ -21,6 +21,13 @@ if {"unwrapped" eq $::starkit::mode} {
     # because it is different than the $tdkRoot/lib.
     lappend auto_path [file join $appRoot lib]
 
+    foreach dumpScript {debug_require  debug_source  dump_packages  dump_stack} {
+        if {[info exists ::tcldevkit::${dumpScript}] \
+                && [set ::tcldevkit::${dumpScript}]} {
+            source [file join $tdkRoot app ${dumpScript}.tcl]
+        }
+    }
+
 } else {
 
     # After wrapping with TclApp the $tdkRoot/lib and $appRoot/lib files

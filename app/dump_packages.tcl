@@ -4,8 +4,8 @@
 # Debugging packages - Dump all packages present when the applications exits
 # --------------------------------------------------------------------------
 
-rename exit _exit
-proc exit {{status 0}} {
+rename ::exit ::_exit
+proc ::exit {{status 0}} {
     set tmp {}
     set mlp 0
     set mlv 0
@@ -28,14 +28,16 @@ proc exit {{status 0}} {
 	}
     }
 
-    puts ______________________________________________________________________________
+    set fd [open [file join $::tcldevkit::appRoot dump_packages.txt] a]
+    puts $fd ______________________________________________________________________________
     foreach entry $tmp {
 	foreach {package version ifneeded} $entry break
 
-	puts [format "%-${mlp}s %-${mlv}s %-55s" \
+	puts $fd [format "%-${mlp}s %-${mlv}s %-55s" \
 		  $package $version $ifneeded]
     }
 
-    puts ______________________________________________________________________________
-    _exit $status
+    puts $fd ______________________________________________________________________________
+    catch {close $fd}
+    ::_exit $status
 }
