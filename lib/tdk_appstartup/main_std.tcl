@@ -34,7 +34,7 @@ if {"unwrapped" eq $::starkit::mode} {
     # will be consolidated into "...kit.exe/lib/application/lib" to
     # separate it from the top-level kit libraries (and dependencies
     # pulled from TAP/Teapot repos).
-    variable appRoot [file dirname $::starkit::topdir lib application]
+    variable appRoot [file join $::starkit::topdir lib application]
     variable tdkRoot $appRoot
 }
 
