@@ -95,7 +95,7 @@ proc tclapp::wrap {argv errVar} {
     if {[misc::printHelp?]} {
 	projectInfo::printCopyright "Tcl Dev Kit TclApp"
 
-	if {[string equal $::tcl_platform(platform) windows]} {
+	if {[::tcldevkit::tk::present]} {
 	    tk_messageBox -icon info -title "TclApp Help" \
 		-type ok -message [mget 0_USAGE_STATEMENT]
 	} else {

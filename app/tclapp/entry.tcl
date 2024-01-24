@@ -30,11 +30,9 @@ if {![info exists ::starkit::mode] || ("unwrapped" eq $::starkit::mode)} {
     # package locations.
 
     starkit::startup
-    set appRoot [file dirname [file dirname $starkit::topdir]]
-    lappend auto_path [file join $appRoot devkit lib]
-    lappend auto_path [file join $appRoot lib]
-#    lappend auto_path ~/TDK/lib
-#    tcl::tm::roots ~/TDK/lib
+    set tdkRoot [file dirname [file dirname $starkit::topdir]]
+    lappend auto_path [file join $tdkRoot devkit lib]
+    lappend auto_path [file join $tdkRoot lib]
 
     package require tclcompiler
 
@@ -44,15 +42,22 @@ if {![info exists ::starkit::mode] || ("unwrapped" eq $::starkit::mode)} {
 
     puts stderr unwrapped\n[join $auto_path \n\t]
 
-    # External standard actions
-    source [file join [pwd] [file dirname $starkit::topdir] main_std.tcl]
-
     package require splash
     splash::configure -message DEVEL
-    splash::configure -imagefile [file join $appRoot artwork splash.png]
+    splash::configure -imagefile [file join $tdkRoot artwork splash.png]
+
+    set startup [file join $tdkRoot app tclapp \
+        lib app-tclapp tclapp_startup.tcl]
+
 } else {
     # Wrapped standard actions.
-    source [file join $starkit::topdir ms.tcl]
+    set appRoot [file join $starkit::topdir lib application]
+    lappend auto_path [file join $appRoot lib]
+    package require splash
+    splash::configure -message "Tcl Dev Kit TclApp"
+    splash::configure -imagefile [file join $appRoot artwork splash.png]
+    set startup [file join $appRoot lib app-tclapp tclapp_startup.tcl]
 }
 
-go [file join $starkit::topdir lib app-tclapp tclapp_startup.tcl]
+package require tdk_appstartup
+go $startup
