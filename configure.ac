@@ -27,8 +27,8 @@ TEA_INIT([3.7])
 TEA_PATH_TCLCONFIG
 TEA_LOAD_TCLCONFIG
 
-#TEA_PATH_TKCONFIG
-#TEA_LOAD_TKCONFIG
+TEA_PATH_TKCONFIG
+TEA_LOAD_TKCONFIG
 
 TEA_PREFIX
 
@@ -39,13 +39,47 @@ TEA_CONFIG_CFLAGS
 TEA_ENABLE_SYMBOLS
 
 TEA_PROG_TCLSH
-#TEA_PROG_WISH
+TEA_PROG_WISH
 
-# Check for TclKit.
+AC_ARG_WITH(tclkit,
+   AS_HELP_STRING([--with-tclkit],
+      [tclkit used for generating all TDK Starpacks]),
+   [with_tclkit="${withval}"],
+   [with_tclkit=no])
+
+if test "$with_tclkit" = "no"; then
+   AC_MSG_NOTICE([no TclKit supplied - generate Starkits])
+   TDK_TCLKIT=""
+else
+   AC_MSG_NOTICE([TclKit supplied: ${with_tclkit} - generate Starpacks])
+   TDK_TCLKIT="$with_tclkit"
+fi
+AC_SUBST(TDK_TCLKIT)
+
+AC_MSG_CHECKING([for required extensions])
+AC_CACHE_VAL(tdk_cv_missing_extensions, [
+dnl Check for list of dependencies by running the TclKit and
+dnl several require statements. Compile a list of missing packages
+dnl to present the user stored as a list in tdk_cv_missing_extensions.
+dnl For each app:
+dnl     1. Grep all "package require" statements from the app dir.
+dnl     2. Grep all "package require" statements from the lib dir.
+dnl     3. Do the same for "package provides" statements. Anything
+dnl     	 not provided internally must be available in the Kit *or*
+dnl	 within the distribution (when --with-tcl/--with-tk are
+dnl	 supplied).
+tdk_cv_missing_extensions=0
+])
+
+if test "${tdk_cv_missing_extensions}" = "0" ; then
+   AC_MSG_RESULT([found all required extensions])
+else
+   AC_MSG_WARN([Missing some extensions])
+fi
 
 AC_CONFIG_SUBDIRS([
-  lib/tclcompiler
-  lib/tclparser
+   lib/tclcompiler
+   lib/tclparser
 ])
 
 AC_CONFIG_FILES([Makefile])
