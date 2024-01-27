@@ -31,19 +31,25 @@ TCL_SRC_DIR	= @TCL_SRC_DIR@
 #TK_BIN_DIR	= @TK_BIN_DIR@
 #TK_SRC_DIR	= @TK_SRC_DIR@
 
+TDK_TCLKIT = @TDK_TCLKIT@
+TDK_TCLSH_PROG = @TDK_TCLSH_PROG@
+TDK_WISH_PROG = @TDK_WISH_PROG@
+
 EXTRA_PATH  = $(top_builddir):$(TCL_BIN_DIR):$(TCL_BIN_DIR)/../bin
-#EXTRA_PATH = $(top_builddir):$(TCL_BIN_DIR):$(TK_BIN_DIR)
-TCLLIBPATH  = $(top_builddir)
-TCLSH_ENV   = TCL_LIBRARY=`@CYGPATH@ $(TCL_SRC_DIR)/library`
+#TCLLIBPATH  = $(top_builddir)
+#TCLSH_ENV   = TCL_LIBRARY=`@CYGPATH@ $(TCL_SRC_DIR)/library`
 
-PKG_ENV = @LD_LIBRARY_PATH_VAR@="$(EXTRA_PATH):$(@LD_LIBRARY_PATH_VAR@)" \
-	PATH="$(EXTRA_PATH):$(PATH)" \
-	TCLLIBPATH="$(TCLLIBPATH)"
+#PKG_ENV = @LD_LIBRARY_PATH_VAR@="$(EXTRA_PATH):$(@LD_LIBRARY_PATH_VAR@)" \
+#	PATH="$(EXTRA_PATH):$(PATH)" \
+#	TCLLIBPATH="$(TCLLIBPATH)"
+#
+#TCLSH_PROG = @TDK_TCLSH_PROG@
+#TCLSH      = $(TCLSH_ENV) $(PKG_ENV) $(TCLSH_PROG)
 
-TCLSH_PROG = @TCLSH_PROG@
-TCLSH      = $(TCLSH_ENV) $(PKG_ENV) $(TCLSH_PROG)
+all: tbcload tclcompiler tclparser apps
 
-all: tclcompiler tclparser apps
+tbcload:
+	cd lib/tbcload && $(MAKE) all
 
 tclcompiler:
 	cd lib/tclcompiler && $(MAKE) all
@@ -54,8 +60,11 @@ tclparser:
 apps: apps/tclapp
 
 apps/tclapp:
-	mkdir apps
-	$(TCLSH) `@CYGPATH@ $(srcdir)/app/tclapp/entry.tcl`
+	echo TCLAPP_PKGPATH=$(srcdir) $(TDK_TCLSH_PROG) $(srcdir)/app/tclapp/entry.tcl \
+		-relativeto $(srcdir) $(srcdir)/app/tclapp/entry.tcl \
+		-relativeto $(pwd) $(pwd)/app/tclapp/* \
+		-pkg tbcload -pkg tclcompiler -pkg tclparser \
+		-relativeto $(pwd) $(pwd)/lib/*/*
 
 clean:
 	cd lib/tclcompiler && $(MAKE) $@

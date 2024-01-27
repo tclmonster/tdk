@@ -27,19 +27,17 @@ TEA_INIT([3.7])
 TEA_PATH_TCLCONFIG
 TEA_LOAD_TCLCONFIG
 
-TEA_PATH_TKCONFIG
-TEA_LOAD_TKCONFIG
-
-TEA_PREFIX
+# Tk config checks are intentionally skipped because nmake builds
+# do not (as of 8.6.13) generate tkConfig.sh files. Consequently this
+# will fail for ActiveTcl, Magicsplat, et cetera. As a workaround it
+# is simply assumed that the `wish` executable is located alongside
+# the `tclsh` executable.
 
 TEA_SETUP_COMPILER
 TEA_ENABLE_THREADS
 TEA_ENABLE_SHARED
 TEA_CONFIG_CFLAGS
 TEA_ENABLE_SYMBOLS
-
-TEA_PROG_TCLSH
-TEA_PROG_WISH
 
 AC_ARG_WITH(tclkit,
    AS_HELP_STRING([--with-tclkit],
@@ -54,7 +52,13 @@ else
    AC_MSG_NOTICE([TclKit supplied: ${with_tclkit} - generate Starpacks])
    TDK_TCLKIT="$with_tclkit"
 fi
+
+TDK_TCLSH_PROG="${TCL_BIN_DIR}/../bin/tclsh${EXEEXT}"
+TDK_WISH_PROG="${TCL_BIN_DIR}/../bin/wish${EXEEXT}"
+
 AC_SUBST(TDK_TCLKIT)
+AC_SUBST(TDK_TCLSH_PROG)
+AC_SUBST(TDK_WISH_PROG)
 
 AC_MSG_CHECKING([for required extensions])
 AC_CACHE_VAL(tdk_cv_missing_extensions, [
@@ -78,6 +82,7 @@ else
 fi
 
 AC_CONFIG_SUBDIRS([
+   lib/tbcload
    lib/tclcompiler
    lib/tclparser
 ])
