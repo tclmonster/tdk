@@ -59,12 +59,67 @@ tclparser:
 
 apps: apps/tclapp
 
+TDK_COMPILER_PKGS = \
+	tbcload \
+	tclcompiler \
+	tclparser
+
+TDK_INTERNAL_PKGS = \
+	afs \
+	tcldevkit::appframe \
+	hpane \
+	checker \
+	cmatch \
+	engine \
+	debugger \
+	view \
+	vtree \
+	help \
+	ico \
+	image \
+	listentry \
+	clogwindow \
+	teapot::metadata \
+	as::cache::async \
+	oomk \
+	osx::bundle::app \
+	tdk_prowrap \
+	teapot::package::gen \
+	platform \
+	pref::devkit \
+	pref \
+	pref::teapot \
+	projectInfo \
+	repository::local \
+	selfile \
+	splash \
+	stringfileinfo \
+	syscolor \
+	tap::db \
+	tapscan \
+	tcldebugger_attach \
+	tdk_appstartup \
+	teapot::config \
+	teapot::entity \
+	teapot::link \
+	tlocate \
+	toolbar \
+	tclapp::wrapengine \
+	Entity
+
+TCLAPP_PROG = $(TDK_TCLSH_PROG) $(srcdir)/app/tclapp/entry.tcl
+
 apps/tclapp:
-	echo TCLAPP_PKGPATH=$(srcdir) $(TDK_TCLSH_PROG) $(srcdir)/app/tclapp/entry.tcl \
-		-relativeto $(srcdir) $(srcdir)/app/tclapp/entry.tcl \
-		-relativeto $(pwd) $(pwd)/app/tclapp/* \
-		-pkg tbcload -pkg tclcompiler -pkg tclparser \
-		-relativeto $(pwd) $(pwd)/lib/*/*
+	D="$$(cd $(srcdir); pwd)" ; \
+	TOP_LEVEL_FILES=`for file in "$${D}"/artwork "$${D}"/data/images; do printf '%s/* ' "$${file}"; done` ; \
+	APP_FILES=`find "$${D}"/app/tclapp -type d` ; \
+	APP_FILES_WITH_GLOB=`for file in $${APP_FILES}; do printf '%s/* ' "$${file}"; done` ; \
+	PACKAGES=`for pkg in $(TDK_COMPILER_PKGS) $(TDK_INTERNAL_PKGS); do printf -- '-pkg %s ' "$${pkg}"; done` ; \
+	TCLAPP_PKGPATH="$${D}" $(TCLAPP_PROG) -relativeto "$${D}"/app/tclapp "$${D}"/app/tclapp/entry.tcl \
+		-relativeto "$${D}"/app/tclapp $${APP_FILES_WITH_GLOB} $${PACKAGES} \
+		-relativeto "$${D}" $${TOP_LEVEL_FILES} \
+		-out "$(top_builddir)/tclapp"
+
 
 clean:
 	cd lib/tclcompiler && $(MAKE) $@

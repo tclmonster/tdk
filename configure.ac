@@ -81,11 +81,19 @@ else
    AC_MSG_WARN([Missing some extensions])
 fi
 
+TDK_TAP_DIR=`$CYGPATH $(cd $srcdir; pwd)`
+AC_SUBST(TDK_TAP_DIR)
+
 AC_CONFIG_SUBDIRS([
    lib/tbcload
    lib/tclcompiler
    lib/tclparser
 ])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([
+   Makefile
+   TclCompiler.tap
+   TdkPackages.tap
+])
+
 AC_OUTPUT

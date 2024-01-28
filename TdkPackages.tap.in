@@ -1,0 +1,964 @@
+format  {TclDevKit Project File}
+fmtver  2.0
+fmttool {TclDevKit TclApp PackageDefinition} @tp_majorversion@.@tp_minorversion@
+
+##  Saved at : Sat Jan 27 18:40:14 AST 2024
+##  By       : bandoti
+
+########
+#####
+###
+##
+#
+
+Package {tdk_lib_afs 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/afs
+Path    afs-sig.tm
+Path    afs.tm
+Path    pkgIndex.tcl
+Package {afs 0.1}
+See     tdk_lib_afs
+Package {afs::sig 0.1}
+See     tdk_lib_afs
+Package {tdk_lib_appframe 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/appframe
+Path    appframe.tcl
+Path    check_tk.tcl
+Path    config.tcl
+Path    images/help.gif
+Path    pkgIndex.tcl
+Path    pref.tcl
+Path    system.tcl
+Path    tcldevkit-config.tm
+Path    tcldevkit-tk.tm
+Path    teapot.txt
+Package {tcldevkit::appframe 1.0}
+See     tdk_lib_appframe
+Package {tcldevkit::config 2.0}
+See     tdk_lib_appframe
+Package {tcldevkit::tk 1.0}
+See     tdk_lib_appframe
+Package {hpane 0.1}
+Base    @TDK_TAP_DIR@/lib/appwidgets
+Path    hpane.tm
+Path    pkgIndex.tcl
+Package {tdk_lib_checker 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/checker
+Path    ATS.pcx
+Path    Blt.pcx
+Path    ChangeLog
+Path    DEPENDENCIES
+Path    Expect.pcx
+Path    Itcl.pcx
+Path    Makefile.in
+Path    TclOO.pcx
+Path    Tclx.pcx
+Path    Tk.pcx
+Path    Tktable.pcx
+Path    XOTcl.pcx
+Path    aclocal.m4
+Path    analyzer.tcl
+Path    blend.pcx
+Path    cdb.tcl
+Path    checker.tcl
+Path    checkerCmdline.tcl
+Path    config/ChangeLog
+Path    config/config.guess
+Path    config/config.sub
+Path    config/install-sh
+Path    config/installFile.tcl
+Path    config/mkinstalldirs
+Path    config/tcl.m4
+Path    configure.in
+Path    configure.tcl
+Path    context.tcl
+Path    coreTcl.tcl
+Path    dde.pcx
+Path    descriptions.txt
+Path    doc/Notes
+Path    doc/ko_reintegrate.sh
+Path    doc/komodo_tcl_lint.tcl
+Path    doc/messageIDs.txt
+Path    doc/tip_update.tcl
+Path    doc/upgrade-8-3-1.tcl
+Path    doc/upgrade-8-3-2.tcl
+Path    doc/upgrade-8-3-3.tcl
+Path    doc/upgrade-8-3-4.tcl
+Path    doc/upgrade-8-4-a4.tcl
+Path    filter.tcl
+Path    http.pcx
+Path    location.tcl
+Path    message.tcl
+Path    msgcat.pcx
+Path    oratcl.pcx
+Path    pcx.tcl
+Path    pkgIndex.tcl
+Path    pkgIndex.tcl.in
+Path    platform.pcx
+Path    platform_shell.pcx
+Path    registry.pcx
+Path    snit.pcx
+Path    sybtcl.pcx
+Path    tclCom.pcx
+Path    tclDP.pcx
+Path    tclDomPro.pcx
+Path    tcltest.pcx
+Path    teapot.txt
+Path    tests/all.tcl
+Path    tests/analyzer.test
+Path    tests/blend.test
+Path    tests/blendTable
+Path    tests/blend_bb.test
+Path    tests/blt.oldTest
+Path    tests/bltTable
+Path    tests/checker.test
+Path    tests/context.test
+Path    tests/coreTcl.test
+Path    tests/coreTclTable
+Path    tests/coreTk.test
+Path    tests/coreTkTable
+Path    tests/coreTkTypes.test
+Path    tests/defs.tcl
+Path    tests/expect.test
+Path    tests/expectTable
+Path    tests/flags_bb.test
+Path    tests/incrTcl.test
+Path    tests/incrTclTable
+Path    tests/logError.oldTest
+Path    tests/msgs_bb.test
+Path    tests/oratcl.test
+Path    tests/oratclTable
+Path    tests/oratcl_bb.test
+Path    tests/pkgIndex.tcl
+Path    tests/protest.tcl
+Path    tests/scanBodies.test
+Path    tests/startup.tcl
+Path    tests/sybtcl.oldTest
+Path    tests/sybtclTable
+Path    tests/sybtcl_bb.oldTest
+Path    tests/tclCom.test
+Path    tests/tclComTable
+Path    tests/tclCom_bb.test
+Path    tests/tclDomPro.test
+Path    tests/tclDomProTable
+Path    tests/tclDomPro_bb.test
+Path    tests/tclX.test
+Path    tests/tclXTable
+Path    tests/teapot.txt
+Path    tests/twoPass_bb.test
+Path    tests/use_bb.test
+Path    tests/userproc.test
+Path    tests/xmlAct.test
+Path    tests/xmlActTable
+Path    tests/xmlAct_bb.test
+Path    tests/xmlGen.test
+Path    tests/xmlGenTable
+Path    tests/xmlGen_bb.test
+Path    tests/xmlServer.test
+Path    tests/xmlServerTable
+Path    tests/xmlServer_bb.test
+Path    timeline.tcl
+Path    userproc.tcl
+Path    xmlAct.pcx
+Path    xmlGen.pcx
+Path    xmlServer.pcx
+Path    xref.tcl
+Package {analyzer 1.0}
+See     tdk_lib_checker
+Package {cdb 1.0}
+See     tdk_lib_checker
+Package {checker 1.4}
+See     tdk_lib_checker
+Package {checkerCmdline 1.0}
+See     tdk_lib_checker
+Package {configure 1.0}
+See     tdk_lib_checker
+Package {context 1.0}
+See     tdk_lib_checker
+Package {filter 1.0}
+See     tdk_lib_checker
+Package {location 1.0}
+See     tdk_lib_checker
+Package {message 1.0}
+See     tdk_lib_checker
+Package {pcx 1.0}
+See     tdk_lib_checker
+Package {timeline 1.0}
+See     tdk_lib_checker
+Package {userproc 1.0}
+See     tdk_lib_checker
+Package {xref 1.0}
+See     tdk_lib_checker
+Package {cmatch 0.1}
+Base    @TDK_TAP_DIR@/lib/cmatch
+Path    cmatch.tm
+Path    pkgIndex.tcl
+Package {tdk_lib_dbg_engine 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/dbg_engine
+Path    appLaunch.tcl
+Path    blend.pdx
+Path    block.tcl
+Path    break.tcl
+Path    dbg.tcl
+Path    engine.tcl
+Path    exec.pdx
+Path    file.tcl
+Path    instrument.tcl
+Path    location.tcl
+Path    oo.pdx
+Path    open.pdx
+Path    oratcl.pdx
+Path    pdx.tcl
+Path    pkgIndex.tcl
+Path    snit.pdx
+Path    spawn.pdx
+Path    sybtcl.pdx
+Path    tclCom.pdx
+Path    tcltest.pdx
+Path    teapot.txt
+Path    thread.pdx
+Path    uplevel.pdx
+Path    util.tcl
+Path    xmlGen.pdx
+Package {blk 1.0}
+See     tdk_lib_dbg_engine
+Package {breakdb 1.0}
+See     tdk_lib_dbg_engine
+Package {dbgtalk 0.1}
+See     tdk_lib_dbg_engine
+Package {engine 0.1}
+See     tdk_lib_dbg_engine
+Package {filedb 1.0}
+See     tdk_lib_dbg_engine
+Package {instrument 1.0}
+See     tdk_lib_dbg_engine
+Package {loc 1.0}
+See     tdk_lib_dbg_engine
+Package {pdx 1.0}
+See     tdk_lib_dbg_engine
+Package {util 1.0}
+See     tdk_lib_dbg_engine
+Package {tdk_lib_debugger 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/debugger
+Path    ChangeLog
+Path    DEPENDENCIES
+Path    Makefile.in
+Path    aclocal.m4
+Path    bindings.tcl
+Path    breakWin.tcl
+Path    checkWin.tcl
+Path    checker.tcl
+Path    codeWin.tcl
+Path    config/ChangeLog
+Path    config/config.guess
+Path    config/config.sub
+Path    config/install-sh
+Path    config/installFile.tcl
+Path    config/mkinstalldirs
+Path    config/tcl.m4
+Path    configure.in
+Path    connstatus.tcl
+Path    coverage.tcl
+Path    debugger.tcl
+Path    deferror.tcl
+Path    docs/initdebug.n
+Path    evalWin.tcl
+Path    find.tcl
+Path    fmttext.tcl
+Path    font.tcl
+Path    goto.tcl
+Path    gui.tcl
+Path    guiUtil.tcl
+Path    icolist.tcl
+Path    icon.tcl
+Path    image.tcl
+Path    images/about.gif
+Path    images/add.png
+Path    images/arrow_up.png
+Path    images/break_d.gif
+Path    images/break_e.gif
+Path    images/break_m.gif
+Path    images/break_s.gif
+Path    images/break_sx.png
+Path    images/breakspawn_dd.gif
+Path    images/breakspawn_de.gif
+Path    images/breakspawn_ed.gif
+Path    images/breakspawn_ee.gif
+Path    images/bug.png
+Path    images/cancel.png
+Path    images/class.gif
+Path    images/cog.png
+Path    images/combo_arrow.gif
+Path    images/cross.png
+Path    images/current.gif
+Path    images/current_bs_dd.gif
+Path    images/current_bs_de.gif
+Path    images/current_bs_ed.gif
+Path    images/current_bs_ee.gif
+Path    images/current_d.gif
+Path    images/current_e.gif
+Path    images/current_m.gif
+Path    images/current_spd.gif
+Path    images/current_spe.gif
+Path    images/current_v.gif
+Path    images/debugUnixIcon.gif
+Path    images/debug_break.png
+Path    images/delete.png
+Path    images/down.png
+Path    images/file.png
+Path    images/flag_blue.png
+Path    images/go.png
+Path    images/help.gif
+Path    images/history.gif
+Path    images/history_bs_dd.gif
+Path    images/history_bs_de.gif
+Path    images/history_bs_ed.gif
+Path    images/history_bs_ee.gif
+Path    images/history_disable.gif
+Path    images/history_enable.gif
+Path    images/history_mixed.gif
+Path    images/history_spd.gif
+Path    images/history_spe.gif
+Path    images/link_break.png
+Path    images/logo.gif
+Path    images/namespace.gif
+Path    images/package.png
+Path    images/page_refresh.png
+Path    images/proc.gif
+Path    images/restart.png
+Path    images/script.png
+Path    images/sort_decreasing.gif
+Path    images/sort_increasing.gif
+Path    images/spawn_d.gif
+Path    images/spawn_e.gif
+Path    images/star.png
+Path    images/stepin.gif
+Path    images/stepout.gif
+Path    images/stepover.gif
+Path    images/stepresult.gif
+Path    images/stepto.gif
+Path    images/syn_error_s.gif
+Path    images/syn_error_sx.png
+Path    images/up.png
+Path    images/var_d.gif
+Path    images/var_e.gif
+Path    images/var_s.gif
+Path    images/var_sx.png
+Path    images/warning.png
+Path    images/win_break.gif
+Path    images/win_cover.gif
+Path    images/win_eval.gif
+Path    images/win_proc.gif
+Path    images/win_watch.gif
+Path    images/wrench.png
+Path    initdebug.tcl
+Path    inspectorWin.tcl
+Path    menu.tcl
+Path    mkIndex.tcl
+Path    options.tcl
+Path    parseerror.tcl
+Path    pkgIndex.tcl
+Path    portWin.tcl
+Path    prefWin.tcl
+Path    procWin.tcl
+Path    proj.tcl
+Path    projWin.tcl
+Path    result.tcl
+Path    rterror.tcl
+Path    selection.tcl
+Path    stackWin.tcl
+Path    startup.tcl
+Path    system.tcl
+Path    teapot.txt
+Path    test.tcl
+Path    tests/all.tcl
+Path    tests/blend.test
+Path    tests/block.test
+Path    tests/break.test
+Path    tests/breakWin.test
+Path    tests/dbg.test
+Path    tests/dbgLaunch.tcl
+Path    tests/guiLaunch.tcl
+Path    tests/initProject.tcl
+Path    tests/initdebug.test
+Path    tests/inspectorWin.test
+Path    tests/instrument.test
+Path    tests/nub.test
+Path    tests/oratcl.test
+Path    tests/pkgIndex.tcl
+Path    tests/pref.test
+Path    tests/proj.test
+Path    tests/protest.tcl
+Path    tests/result.test
+Path    tests/startup.tcl
+Path    tests/sybtcl.test
+Path    tests/system.test
+Path    tests/tclCom.test
+Path    tests/tcltest.test
+Path    tests/teapot.txt
+Path    tests/uplevel.test
+Path    tests/varWin.test
+Path    tests/xmlGen.test
+Path    tkcon.tcl
+Path    toolbar.tcl
+Path    transMenu.tcl
+Path    transform.tcl
+Path    ui_engine.tcl
+Path    varAttr.tcl
+Path    varCache.tcl
+Path    varDisplay.tcl
+Path    varWin.tcl
+Path    watchWin.tcl
+Package {bp 1.0}
+See     tdk_lib_debugger
+Package {checkWin 1.0}
+See     tdk_lib_debugger
+Package {checker_bridge 1.0}
+See     tdk_lib_debugger
+Package {codeWin 1.0}
+See     tdk_lib_debugger
+Package {connstatus 1.0}
+See     tdk_lib_debugger
+Package {coverage 1.0}
+See     tdk_lib_debugger
+Package {debugger 1.5}
+See     tdk_lib_debugger
+Package {deferror 1.0}
+See     tdk_lib_debugger
+Package {evalWin 1.0}
+See     tdk_lib_debugger
+Package {find 1.0}
+See     tdk_lib_debugger
+Package {fmttext 1.0}
+See     tdk_lib_debugger
+Package {goto 1.0}
+See     tdk_lib_debugger
+Package {gui 1.0}
+See     tdk_lib_debugger
+Package {icolist 0.1}
+See     tdk_lib_debugger
+Package {icon 1.0}
+See     tdk_lib_debugger
+Package {inspector 1.0}
+See     tdk_lib_debugger
+Package {parseerror 1.0}
+See     tdk_lib_debugger
+Package {portWin 1.0}
+See     tdk_lib_debugger
+Package {procWin 1.0}
+See     tdk_lib_debugger
+Package {proj 1.0}
+See     tdk_lib_debugger
+Package {projWin 1.0}
+See     tdk_lib_debugger
+Package {rterror 1.0}
+See     tdk_lib_debugger
+Package {stack 1.0}
+See     tdk_lib_debugger
+Package {system 1.0}
+See     tdk_lib_debugger
+Package {tkCon 1.0}
+See     tdk_lib_debugger
+Package {transMenu 0.1}
+See     tdk_lib_debugger
+Package {transform 0.1}
+See     tdk_lib_debugger
+Package {ui_engine 0.1}
+See     tdk_lib_debugger
+Package {var 1.0}
+See     tdk_lib_debugger
+Package {varAttr 0.1}
+See     tdk_lib_debugger
+Package {varCache 0.1}
+See     tdk_lib_debugger
+Package {varDisplay 0.1}
+See     tdk_lib_debugger
+Package {watch 1.0}
+See     tdk_lib_debugger
+Package {tdk_lib_gview 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/gview
+Path    action.tm
+Path    dirtreeview.tm
+Path    dirview.tm
+Path    ftype.tm
+Path    obman.tm
+Path    pkgIndex.tcl
+Path    rootview.tm
+Path    view.tm
+Package {action 1.0}
+See     tdk_lib_gview
+Package {dirtreeview 1.0}
+See     tdk_lib_gview
+Package {dirview 1.0}
+See     tdk_lib_gview
+Package {ftype 1.0}
+See     tdk_lib_gview
+Package {obman 1.0}
+See     tdk_lib_gview
+Package {rootview 1.0}
+See     tdk_lib_gview
+Package {view 1.0}
+See     tdk_lib_gview
+Package {tdk_lib_gview_widgets 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/gvwidgets
+Path    clabel.tcl
+Path    pkgIndex.tcl
+Path    svtable.tcl
+Path    teapot.txt
+Path    vlabel.tcl
+Path    vpage.tcl
+Path    vtable.tcl
+Path    vtree.tcl
+Package {clabel 0.1}
+See     tdk_lib_gview_widgets
+Package {svtable 0.1}
+See     tdk_lib_gview_widgets
+Package {vlabel 0.1}
+See     tdk_lib_gview_widgets
+Package {vpage 0.1}
+See     tdk_lib_gview_widgets
+Package {vtable 0.1}
+See     tdk_lib_gview_widgets
+Package {vtree 0.1}
+See     tdk_lib_gview_widgets
+Package {help 0.4}
+Base    @TDK_TAP_DIR@/lib/help
+Path    help.tcl
+Path    pkgIndex.tcl
+Path    teapot.txt
+Package {ico 1.1}
+Base    @TDK_TAP_DIR@/lib/ico
+Path    ico.tcl
+Path    ico0.tcl
+Path    pkgIndex.tcl
+Package {tdk_lib_image 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/image
+Path    image.tcl
+Path    pkgIndex.tcl
+Path    teapot.txt
+Path    tint.tcl
+Package {image 0.3}
+See     tdk_lib_image
+Package {image::tint 0.1}
+See     tdk_lib_image
+Package {tdk_lib_listentry 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/listentry
+Path    dictentry.tm
+Path    listentry.tm
+Path    listentryb.tm
+Path    pkgIndex.tcl
+Package {dictentry 1.0}
+See     tdk_lib_listentry
+Package {listentry 1.0}
+See     tdk_lib_listentry
+Package {listentryb 1.0}
+See     tdk_lib_listentry
+Package {tdk_lib_log 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/log
+Path    clogwindow.tm
+Path    logwindow.tm
+Path    pkgIndex.tcl
+Path    runwindow.tm
+Package {clogwindow 1.0}
+See     tdk_lib_log
+Package {log::window 1.0}
+See     tdk_lib_log
+Package {runwindow 1.0}
+See     tdk_lib_log
+Package {tdk_lib_metadata 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/metadata
+Path    metadata.tm
+Path    pkgIndex.tcl
+Path    teapot-metadata-container.tm
+Path    teapot-metadata-edit.tm
+Path    teapot-metadata-index-journal.tm
+Path    teapot-metadata-index-sqlite.tm
+Path    teapot-metadata-read.tm
+Path    teapot-metadata-scan.tm
+Path    teapot-metadata-write.tm
+Package {teapot::metadata 0.1}
+See     tdk_lib_metadata
+Package {teapot::metadata::container 1.0}
+See     tdk_lib_metadata
+Package {teapot::metadata::edit 0.1}
+See     tdk_lib_metadata
+Package {teapot::metadata::idxjournal 0.1}
+See     tdk_lib_metadata
+Package {teapot::metadata::index::sqlite 0.1}
+See     tdk_lib_metadata
+Package {teapot::metadata::read 0.1}
+See     tdk_lib_metadata
+Package {teapot::metadata::scan 0.1}
+See     tdk_lib_metadata
+Package {teapot::metadata::write 0.1}
+See     tdk_lib_metadata
+Package {tdk_lib_misc 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/misc
+Path    as-cache-async.tm
+Path    as-cache-sync.tm
+Path    as-tdk-komodo.tm
+Path    as-tdk-obfuscated.tm
+Path    event-merger.tm
+Path    iter.tm
+Path    jobs-async.tm
+Path    jobs.tm
+Path    mafter.tm
+Path    pkg-mem.tm
+Path    pkgIndex.tcl
+Path    req.tm
+Package {as::cache::async 0.1}
+See     tdk_lib_misc
+Package {as::cache::sync 0.1}
+See     tdk_lib_misc
+Package {as::tdk::komodo 0.1}
+See     tdk_lib_misc
+Package {as::tdk::obfuscated 0.1}
+See     tdk_lib_misc
+Package {event::merger 0.1}
+See     tdk_lib_misc
+Package {iter 0.1}
+See     tdk_lib_misc
+Package {jobs 0.1}
+See     tdk_lib_misc
+Package {jobs::async 0.1}
+See     tdk_lib_misc
+Package {mafter 0.1}
+See     tdk_lib_misc
+Package {pkg::mem 0.1}
+See     tdk_lib_misc
+Package {req 1.0}
+See     tdk_lib_misc
+Package {oomk 0.3.1}
+Base    @TDK_TAP_DIR@/lib/oomk
+Path    oomk.tm
+Path    pkgIndex.tcl
+Package {osx::bundle::app 0.1}
+Base    @TDK_TAP_DIR@/lib/osx
+Path    osx-bundle-app.tm
+Path    pkgIndex.tcl
+Package {tdk_lib_pfile 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/pfile
+Path    pkgIndex.tcl
+Path    tdk_pf.tm
+Path    tdk_prowrap.tm
+Path    tdk_tap.tm
+Path    tdk_tap_decoder.tm
+Path    tdk_tclapp.tm
+Package {tdk_pf 0.1}
+See     tdk_lib_pfile
+Package {tdk_prowrap 0.1}
+See     tdk_lib_pfile
+Package {tdk_tap 0.1}
+See     tdk_lib_pfile
+Package {tdk_tap_decoder 0.1}
+See     tdk_lib_pfile
+Package {tdk_tclapp 0.1}
+See     tdk_lib_pfile
+Package {tdk_lib_pkggen 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/pkggen
+Path    pkgIndex.tcl
+Path    teapot-package-gen-auto.tm
+Path    teapot-package-gen-pkgIndex.tm
+Path    teapot-package-gen-tm.tm
+Path    teapot-package-gen-zip.tm
+Path    teapot-package-gen.tm
+Package {teapot::package::gen 0.1}
+See     tdk_lib_pkggen
+Package {teapot::package::gen::auto 0.1}
+See     tdk_lib_pkggen
+Package {teapot::package::gen::pkgIndex 0.1}
+See     tdk_lib_pkggen
+Package {teapot::package::gen::tm 0.1}
+See     tdk_lib_pkggen
+Package {teapot::package::gen::zip 0.1}
+See     tdk_lib_pkggen
+Package {tdk_lib_platform 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/platform
+Path    pkgIndex.tcl
+Path    platform.tcl
+Path    shell.tcl
+Path    teapot.txt
+Package {platform 1.0.13}
+See     tdk_lib_platform
+Package {platform::shell 1.1.4}
+See     tdk_lib_platform
+Package {pref::devkit 1.0}
+Base    @TDK_TAP_DIR@/lib/prefdk
+Path    pkgIndex.tcl
+Path    pref-devkit.tm
+Package {tdk_lib_preferences 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/preferences
+Path    pkgIndex.tcl
+Path    pref-stdsr-oo.tm
+Path    pref-stdsr.tm
+Path    pref.tm
+Package {pref 1.0}
+See     tdk_lib_preferences
+Package {pref::stdsr 1.0}
+See     tdk_lib_preferences
+Package {pref::stdsr::oo 1.0}
+See     tdk_lib_preferences
+Package {pref::teapot 1.0}
+Base    @TDK_TAP_DIR@/lib/preftp
+Path    pkgIndex.tcl
+Path    pref-teapot.tm
+Package {projectInfo 1.0}
+Base    @TDK_TAP_DIR@/lib/projectInfo
+Path    pkgIndex.tcl
+Path    projectInfo.tm
+Package {tdk_lib_repository 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/repository
+Path    pkgIndex.tcl
+Path    repository-api.tm
+Path    repository-cache.tm
+Path    repository-local.tm
+Path    repository-localma.tm
+Path    repository-mem.tm
+Path    repository-pool.tm
+Path    repository-prefix.tm
+Path    repository-provided.tm
+Path    repository-proxy.tm
+Path    repository-resolve.tm
+Path    repository-shell.tm
+Path    repository-sqlitedir.tm
+Path    repository-sys.tm
+Path    repository-tap.tm
+Path    repository-tiedir.tm
+Path    repository-union.tm
+Path    teapot-repository-pkgIndex.tm
+Path    teapot-wserver.tm
+Package {repository::api 0.1}
+See     tdk_lib_repository
+Package {repository::cache 0.1}
+See     tdk_lib_repository
+Package {repository::local 0.1}
+See     tdk_lib_repository
+Package {repository::localma 0.1}
+See     tdk_lib_repository
+Package {repository::mem 0.1}
+See     tdk_lib_repository
+Package {repository::pool 0.1}
+See     tdk_lib_repository
+Package {repository::prefix 0.1}
+See     tdk_lib_repository
+Package {repository::provided 0.1}
+See     tdk_lib_repository
+Package {repository::proxy 0.1}
+See     tdk_lib_repository
+Package {repository::resolve 0.1}
+See     tdk_lib_repository
+Package {repository::shell 0.1}
+See     tdk_lib_repository
+Package {repository::sqlitedir 0.1}
+See     tdk_lib_repository
+Package {repository::sys 0.1}
+See     tdk_lib_repository
+Package {repository::tap 0.1}
+See     tdk_lib_repository
+Package {repository::tiedir 0.1}
+See     tdk_lib_repository
+Package {repository::union 0.1}
+See     tdk_lib_repository
+Package {teapot::repository::pkgIndex 0.1}
+See     tdk_lib_repository
+Package {teapot::wserver 0.1}
+See     tdk_lib_repository
+Package {selfile 0.1}
+Base    @TDK_TAP_DIR@/lib/selfile
+Path    pkgIndex.tcl
+Path    selfile.tm
+Package {splash 1.3}
+Base    @TDK_TAP_DIR@/lib/splash
+Path    pkgIndex.tcl
+Path    splash.tcl
+Path    teapot.txt
+Package {stringfileinfo 0.2}
+Base    @TDK_TAP_DIR@/lib/stringfileinfo
+Path    pkgIndex.tcl
+Path    stringfileinfo.tm
+Package {syscolor 0.1}
+Base    @TDK_TAP_DIR@/lib/syscolor
+Path    pkgIndex.tcl
+Path    syscolor.tm
+Package {tdk_lib_tap 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/tap
+Path    pkgIndex.tcl
+Path    tap-cache.tm
+Path    tap-db-files.tm
+Path    tap-db-loader.tm
+Path    tap-db-paths.tm
+Path    tap-db.tm
+Package {tap::cache 0.1}
+See     tdk_lib_tap
+Package {tap::db 0.1}
+See     tdk_lib_tap
+Package {tap::db::files 0.1}
+See     tdk_lib_tap
+Package {tap::db::loader 0.1}
+See     tdk_lib_tap
+Package {tap::db::paths 0.1}
+See     tdk_lib_tap
+Package {tapscan 0.1}
+Base    @TDK_TAP_DIR@/lib/tapscan
+Path    pkgIndex.tcl
+Path    tapscan.tm
+Package {tcldebugger_attach 1.4}
+Base    @TDK_TAP_DIR@/lib/tcldebugger_attach
+Path    attach.tcl
+Path    pkgIndex.tcl
+Path    teapot.txt
+Package {tdk_appstartup 1.0}
+Base    @TDK_TAP_DIR@/lib/tdk_appstartup
+Path    main_std.tcl
+Path    pkgIndex.tcl
+Package {teapot::config 0.1}
+Base    @TDK_TAP_DIR@/lib/teapot
+Path    pkgIndex.tcl
+Path    teapot-config.tm
+Package {tdk_lib_teapotbase 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/teapotbase
+Path    pkgIndex.tcl
+Path    teapot-entity.tm
+Path    teapot-instance.tm
+Path    teapot-listspec.tm
+Path    teapot-query.tm
+Path    teapot-redirect.tm
+Path    teapot-reference.tm
+Path    teapot-version.tm
+Package {teapot::entity 0.1}
+See     tdk_lib_teapotbase
+Package {teapot::instance 0.1}
+See     tdk_lib_teapotbase
+Package {teapot::listspec 0.1}
+See     tdk_lib_teapotbase
+Package {teapot::query 0.1}
+See     tdk_lib_teapotbase
+Package {teapot::redirect 0.1}
+See     tdk_lib_teapotbase
+Package {teapot::reference 0.1}
+See     tdk_lib_teapotbase
+Package {teapot::version 0.1}
+See     tdk_lib_teapotbase
+Package {tdk_lib_teapotlink 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/teapotlink
+Path    pkgIndex.tcl
+Path    teapot-link.tm
+Path    teapot-plat.tm
+Path    teapot-tmbackport.tm
+Package {teapot::link 0.1}
+See     tdk_lib_teapotlink
+Package {teapot::plat 0.1}
+See     tdk_lib_teapotlink
+Package {teapot::tmbackport 0.1}
+See     tdk_lib_teapotlink
+Package {tlocate 0.1}
+Base    @TDK_TAP_DIR@/lib/tlocate
+Path    pkgIndex.tcl
+Path    tlocate.tm
+Package {toolbar 0.2}
+Base    @TDK_TAP_DIR@/lib/toolbar
+Path    pkgIndex.tcl
+Path    toolbar.tm
+Package {tdk_lib_wrapengine 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/wrapengine
+Path    banner.tcl
+Path    cmdline.tcl
+Path    cursor.tcl
+Path    pkgIndex.tcl
+Path    pkgpool.tcl
+Path    tclapp.tcl
+Path    tclapp_config.tcl
+Path    tclapp_files.tcl
+Path    tclapp_fres.tcl
+Path    tclapp_misc.tcl
+Path    tclapp_msgs.tcl
+Path    tclapp_pkg.tcl
+Path    tclapp_tappkg.tcl
+Path    tclapp_tmp.tcl
+Path    teapot.txt
+Path    wengine.tcl
+Package {tclapp 1.0}
+See     tdk_lib_wrapengine
+Package {tclapp::banner 1.0}
+See     tdk_lib_wrapengine
+Package {tclapp::cmdline 1.0}
+See     tdk_lib_wrapengine
+Package {tclapp::config 1.0}
+See     tdk_lib_wrapengine
+Package {tclapp::cursor 1.0}
+See     tdk_lib_wrapengine
+Package {tclapp::files 1.0}
+See     tdk_lib_wrapengine
+Package {tclapp::fres 1.0}
+See     tdk_lib_wrapengine
+Package {tclapp::misc 1.0}
+See     tdk_lib_wrapengine
+Package {tclapp::msgs 1.0}
+See     tdk_lib_wrapengine
+Package {tclapp::pkg 1.0}
+See     tdk_lib_wrapengine
+Package {tclapp::pkg::pool 1.0}
+See     tdk_lib_wrapengine
+Package {tclapp::tappkg 1.0}
+See     tdk_lib_wrapengine
+Package {tclapp::tmp 1.0}
+See     tdk_lib_wrapengine
+Package {tclapp::wrapengine 1.0}
+See     tdk_lib_wrapengine
+Package {tdk_lib_wub84 0.0}
+Hidden  {}
+Base    @TDK_TAP_DIR@/lib/wub84
+Path    Entity.tcl
+Path    HttpUtils.tcl
+Path    Httpd.tcl
+Path    Listener.tcl
+Path    Makefile
+Path    NOTES.old
+Path    PROBLEMS.stx
+Path    Pool.tcl
+Path    TODO.stx
+Path    Timer.tcl
+Path    dictcompat.tcl
+Path    pkgIndex.tcl
+Path    teapot.txt
+Package {Entity 1.0}
+See     tdk_lib_wub84
+Package {HttpUtils 1.0}
+See     tdk_lib_wub84
+Package {Httpd 1.0}
+See     tdk_lib_wub84
+Package {Listener 1.0}
+See     tdk_lib_wub84
+Package {Pool 1.0}
+See     tdk_lib_wub84
+Package {Timer 1.0}
+See     tdk_lib_wub84
+Package {dictcompat 0.1}
+See     tdk_lib_wub84
+
+#
+##
+###
+#####
+########
