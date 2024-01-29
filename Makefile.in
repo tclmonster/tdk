@@ -14,6 +14,8 @@ mandir       = @mandir@
 
 VPATH = @srcdir@
 
+EXEEXT = @EXEEXT@
+
 INSTALL_OPTIONS  =
 INSTALL          = @INSTALL@ $(INSTALL_OPTIONS)
 INSTALL_DATA_DIR = @INSTALL_DATA_DIR@
@@ -37,7 +39,7 @@ TDK_WISH_PROG  = @TDK_WISH_PROG@
 
 kext = @TDK_KIT_EXT@
 
-TDK_APPS = \
+TDK_DEFAULT_APPS = \
 	xref$(kext) \
 	vfse$(kext) \
 	tclapp$(kext) \
@@ -48,19 +50,31 @@ TDK_APPS = \
 	comp$(kext) \
 	check$(kext)
 
+TDK_STARPACK_APPS = \
+	xref$(EXEEXT) \
+	vfse$(EXEEXT) \
+	tclapp$(EXEEXT) \
+	tape$(EXEEXT) \
+	lsmfs$(EXEEXT) \
+	inspector$(EXEEXT) \
+	debug$(EXEEXT) \
+	comp$(EXEEXT) \
+	check$(EXEEXT)
+
+TDK_STARKIT_APPS = \
+	xref.tcl \
+	vfse.tcl \
+	tclapp.tcl \
+	tape.tcl \
+	lsmfs.tcl \
+	inspector.tcl \
+	debug.tcl \
+	comp.tcl \
+	check.tcl
+
 TDK_COMPILER_LIBS = tbcload tclcompiler tclparser
 
-all: $(TDK_COMPILER_LIBS) apps
-
-$(TDK_COMPILER_LIBS):
-	cd lib/$@ && $(MAKE) all
-
-apps: $(TDK_APPS)
-
-TDK_COMPILER_PKGS = \
-	tbcload \
-	tclcompiler \
-	tclparser
+TDK_COMPILER_PKGS = $(TDK_COMPILER_LIBS)
 
 TDK_INTERNAL_PKGS = \
 	afs \
@@ -105,26 +119,56 @@ TDK_INTERNAL_PKGS = \
 	tclapp::wrapengine \
 	Entity
 
-WRAP_PROG = $(TDK_TCLSH_PROG) $(srcdir)/app/tclapp/main.tcl
-WRAP_PREFIX_ARG = `if test -n "@TDK_TCLKIT@"; then echo "-prefix @TDK_TCLKIT@"; else echo ""; fi`
-
 DECL_WRAP_CMD = wrap_app() { \
 	local OUTPUT="$$1"; \
-	local APP_NAME=`echo "$$OUTPUT" | cut -f 1 -d '.'`; \
-	local TOP_LEVEL_FILES=`for file in "$(srcdir)/artwork" "$(srcdir)/data/images"; do printf '%s/* ' "$${file}"; done`; \
-	local APP_FILES=`find "$(srcdir)/app/$$APP_NAME" -type d`; \
-	local APP_FILES_WITH_GLOB=`for file in $${APP_FILES}; do printf '%s/* ' "$${file}"; done`; \
-	local PACKAGES=`for pkg in $(TDK_COMPILER_PKGS) $(TDK_INTERNAL_PKGS); do printf -- '-pkg %s ' "$${pkg}"; done`; \
-	TCLAPP_PKGPATH="$(srcdir)" $(WRAP_PROG) \
-		-relativeto "$(srcdir)/app/$$APP_NAME" "$(srcdir)/app/$$APP_NAME/main.tcl" \
-		-relativeto "$(srcdir)/app/$$APP_NAME" $${APP_FILES_WITH_GLOB} $${PACKAGES} \
-		-relativeto "$(srcdir)" $${TOP_LEVEL_FILES} $(WRAP_PREFIX_ARG) -out "$$OUTPUT"; \
+	local APP_NAME=$$(echo "$$OUTPUT" | cut    -f1 -d '.'); \
+	local APP_EXT=$$(echo "$$OUTPUT"  | cut -s -f2 -d '.'); \
+	local WRAP_PREFIX_ARG= ; \
+	if test "$$APP_EXT" != "tcl"; then \
+		if test -n "@TDK_TCLKIT@"; then \
+			WRAP_PREFIX_ARG="-prefix @TDK_TCLKIT@"; \
+		else \
+			echo "Error: cannot build requested Starpack: \"$$OUTPUT\".\
+				  Please run \"configure --with-tclkit=...\"." 1>&2; \
+			exit 1; \
+		fi; \
+	fi; \
+	local TOP_LEVEL_FILES= ; \
+	for file in "$(srcdir)/artwork" "$(srcdir)/data/images"; do \
+		TOP_LEVEL_FILES="$$TOP_LEVEL_FILES $${file}/*"; \
+	done; \
+	local APP_FILES=$$(find "$(srcdir)/app/$$APP_NAME" -type d); \
+	local APP_FILES_WITH_GLOB= ; \
+	for file in $${APP_FILES}; do \
+		APP_FILES_WITH_GLOB="$$APP_FILES_WITH_GLOB $${file}/*"; \
+	done; \
+	local PACKAGES= ; \
+	for pkg in $(TDK_COMPILER_PKGS) $(TDK_INTERNAL_PKGS); do \
+		PACKAGES="$$PACKAGES -pkg $$pkg"; \
+	done; \
+	TCLAPP_PKGPATH="$(srcdir)" \
+		$(TDK_TCLSH_PROG) $(srcdir)/app/tclapp/main.tcl \
+			-relativeto "$(srcdir)/app/$$APP_NAME" "$(srcdir)/app/$$APP_NAME/main.tcl" \
+			-relativeto "$(srcdir)/app/$$APP_NAME" $${APP_FILES_WITH_GLOB} \
+			$${PACKAGES} \
+			-relativeto "$(srcdir)" $${TOP_LEVEL_FILES} \
+			$${WRAP_PREFIX_ARG} \
+			-out "$$OUTPUT"; \
 }
 
+all: default_apps
 
-$(TDK_APPS):
+$(TDK_COMPILER_LIBS):
+	cd lib/$@ && $(MAKE) all
+
+default_apps: $(TDK_DEFAULT_APPS)
+
+starpacks: $(TDK_STARPACK_APPS)
+
+starkits: $(TDK_STARKIT_APPS)
+
+$(TDK_STARKIT_APPS) $(TDK_STARPACK_APPS): $(TDK_COMPILER_LIBS)
 	$(DECL_WRAP_CMD); wrap_app $@
-
 
 clean:
 	cd lib/tbcload     && $(MAKE) $@
@@ -139,4 +183,4 @@ config.status: configure
 
 #.PHONY: FORCE all clean check dist distcheck install uninstall
 
-.PHONY: all apps clean
+.PHONY: all default_apps starpacks starkits clean
