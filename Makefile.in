@@ -31,35 +31,31 @@ TCL_SRC_DIR	= @TCL_SRC_DIR@
 #TK_BIN_DIR	= @TK_BIN_DIR@
 #TK_SRC_DIR	= @TK_SRC_DIR@
 
-TDK_TCLKIT = @TDK_TCLKIT@
+TDK_TCLKIT     = @TDK_TCLKIT@
 TDK_TCLSH_PROG = @TDK_TCLSH_PROG@
-TDK_WISH_PROG = @TDK_WISH_PROG@
+TDK_WISH_PROG  = @TDK_WISH_PROG@
 
-TDK_KIT_EXT = @TDK_KIT_EXT@
+kext = @TDK_KIT_EXT@
 
-EXTRA_PATH  = $(top_builddir):$(TCL_BIN_DIR):$(TCL_BIN_DIR)/../bin
-#TCLLIBPATH  = $(top_builddir)
-#TCLSH_ENV   = TCL_LIBRARY=`@CYGPATH@ $(TCL_SRC_DIR)/library`
+TDK_APPS = \
+	xref$(kext) \
+	vfse$(kext) \
+	tclapp$(kext) \
+	tape$(kext) \
+	lsmfs$(kext) \
+	inspector$(kext) \
+	debug$(kext) \
+	comp$(kext) \
+	check$(kext)
 
-#PKG_ENV = @LD_LIBRARY_PATH_VAR@="$(EXTRA_PATH):$(@LD_LIBRARY_PATH_VAR@)" \
-#	PATH="$(EXTRA_PATH):$(PATH)" \
-#	TCLLIBPATH="$(TCLLIBPATH)"
-#
-#TCLSH_PROG = @TDK_TCLSH_PROG@
-#TCLSH      = $(TCLSH_ENV) $(PKG_ENV) $(TCLSH_PROG)
+TDK_COMPILER_LIBS = tbcload tclcompiler tclparser
 
-all: tbcload tclcompiler tclparser apps
+all: $(TDK_COMPILER_LIBS) apps
 
-tbcload:
-	cd lib/tbcload && $(MAKE) all
+$(TDK_COMPILER_LIBS):
+	cd lib/$@ && $(MAKE) all
 
-tclcompiler:
-	cd lib/tclcompiler && $(MAKE) all
-
-tclparser:
-	cd lib/tclparser && $(MAKE) all
-
-apps: $(top_builddir)/tclapp$(TDK_KIT_EXT)
+apps: $(TDK_APPS)
 
 TDK_COMPILER_PKGS = \
 	tbcload \
@@ -109,22 +105,29 @@ TDK_INTERNAL_PKGS = \
 	tclapp::wrapengine \
 	Entity
 
-WRAP_PROG = $(TDK_TCLSH_PROG) $(srcdir)/app/tclapp/entry.tcl
+WRAP_PROG = $(TDK_TCLSH_PROG) $(srcdir)/app/tclapp/main.tcl
 WRAP_PREFIX_ARG = `if test -n "@TDK_TCLKIT@"; then echo "-prefix @TDK_TCLKIT@"; else echo ""; fi`
 
-$(top_builddir)/tclapp$(TDK_KIT_EXT):
-	TOP_LEVEL_FILES=`for file in "$(srcdir)"/artwork "$(srcdir)"/data/images; do printf '%s/* ' "$${file}"; done` ; \
-	APP_FILES=`find "$(srcdir)"/app/tclapp -type d` ; \
-	APP_FILES_WITH_GLOB=`for file in $${APP_FILES}; do printf '%s/* ' "$${file}"; done` ; \
-	PACKAGES=`for pkg in $(TDK_COMPILER_PKGS) $(TDK_INTERNAL_PKGS); do printf -- '-pkg %s ' "$${pkg}"; done` ; \
-	TCLAPP_PKGPATH="$(srcdir)" $(WRAP_PROG) -relativeto "$(srcdir)"/app/tclapp "$(srcdir)"/app/tclapp/entry.tcl \
-		-relativeto "$(srcdir)"/app/tclapp $${APP_FILES_WITH_GLOB} $${PACKAGES} \
-		-relativeto "$(srcdir)" $${TOP_LEVEL_FILES} \
-		$(WRAP_PREFIX_ARG) \
-		-out "$(top_builddir)/tclapp$(TDK_KIT_EXT)"
+DECL_WRAP_CMD = wrap_app() { \
+	local OUTPUT="$$1"; \
+	local APP_NAME=`echo "$$OUTPUT" | cut -f 1 -d '.'`; \
+	local TOP_LEVEL_FILES=`for file in "$(srcdir)/artwork" "$(srcdir)/data/images"; do printf '%s/* ' "$${file}"; done`; \
+	local APP_FILES=`find "$(srcdir)/app/$$APP_NAME" -type d`; \
+	local APP_FILES_WITH_GLOB=`for file in $${APP_FILES}; do printf '%s/* ' "$${file}"; done`; \
+	local PACKAGES=`for pkg in $(TDK_COMPILER_PKGS) $(TDK_INTERNAL_PKGS); do printf -- '-pkg %s ' "$${pkg}"; done`; \
+	TCLAPP_PKGPATH="$(srcdir)" $(WRAP_PROG) \
+		-relativeto "$(srcdir)/app/$$APP_NAME" "$(srcdir)/app/$$APP_NAME/main.tcl" \
+		-relativeto "$(srcdir)/app/$$APP_NAME" $${APP_FILES_WITH_GLOB} $${PACKAGES} \
+		-relativeto "$(srcdir)" $${TOP_LEVEL_FILES} $(WRAP_PREFIX_ARG) -out "$$OUTPUT"; \
+}
+
+
+$(TDK_APPS):
+	$(DECL_WRAP_CMD); wrap_app $@
 
 
 clean:
+	cd lib/tbcload     && $(MAKE) $@
 	cd lib/tclcompiler && $(MAKE) $@
 	cd lib/tclparser   && $(MAKE) $@
 
