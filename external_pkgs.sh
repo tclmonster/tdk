@@ -1,6 +1,11 @@
 #!/bin/sh
 
 root_dir="$1"
+if ! test -d "$root_dir"; then
+    echo "Invalid directory \"$root_dir\""
+    echo "Usage: $0 TDK_SOURCE_ROOT"
+    exit 1
+fi
 
 grep_cmd="grep -E -ohR --exclude-dir=tests"
 
