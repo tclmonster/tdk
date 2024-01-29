@@ -48,15 +48,18 @@ AC_ARG_WITH(tclkit,
 if test "$with_tclkit" = "no"; then
    AC_MSG_NOTICE([no TclKit supplied - generate Starkits])
    TDK_TCLKIT=""
+   TDK_KIT_EXT=".tcl"
 else
    AC_MSG_NOTICE([TclKit supplied: ${with_tclkit} - generate Starpacks])
-   TDK_TCLKIT="$with_tclkit"
+   TDK_TCLKIT=`$CYGPATH "$with_tclkit"`
+   TDK_KIT_EXT="$EXEEXT"
 fi
 
-TDK_TCLSH_PROG="${TCL_BIN_DIR}/../bin/tclsh${EXEEXT}"
-TDK_WISH_PROG="${TCL_BIN_DIR}/../bin/wish${EXEEXT}"
+TDK_TCLSH_PROG=`$CYGPATH ${TCL_BIN_DIR}/../bin/tclsh${EXEEXT}`
+TDK_WISH_PROG=`$CYGPATH ${TCL_BIN_DIR}/../bin/wish${EXEEXT}`
 
 AC_SUBST(TDK_TCLKIT)
+AC_SUBST(TDK_KIT_EXT)
 AC_SUBST(TDK_TCLSH_PROG)
 AC_SUBST(TDK_WISH_PROG)
 
@@ -81,7 +84,7 @@ else
    AC_MSG_WARN([Missing some extensions])
 fi
 
-TDK_TAP_DIR=`$CYGPATH $(cd $srcdir; pwd)`
+TDK_TAP_DIR=$($CYGPATH $(cd $srcdir; pwd))
 AC_SUBST(TDK_TAP_DIR)
 
 AC_CONFIG_SUBDIRS([
