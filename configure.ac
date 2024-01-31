@@ -39,20 +39,24 @@ TEA_ENABLE_SHARED
 TEA_CONFIG_CFLAGS
 TEA_ENABLE_SYMBOLS
 
+TDK_TAP_DIR=`$CYGPATH $(cd $srcdir; pwd)`
+AC_SUBST(TDK_TAP_DIR)
+
+AC_MSG_CHECKING([for tclkit])
 AC_ARG_WITH(tclkit,
-   AS_HELP_STRING([--with-tclkit],
-      [tclkit used for generating all TDK Starpacks]),
-   [with_tclkit="${withval}"],
-   [with_tclkit=no])
+	AS_HELP_STRING([--with-tclkit],
+		[tclkit used for generating all TDK Starpacks]),
+	[with_tclkit="${withval}"],
+	[with_tclkit=no])
 
 if test "$with_tclkit" = "no"; then
-   AC_MSG_NOTICE([no TclKit supplied - generate Starkits])
-   TDK_TCLKIT=""
-   TDK_KIT_EXT=".tcl"
+	AC_MSG_RESULT([none])
+	TDK_TCLKIT=""
+	TDK_KIT_EXT=".tcl"
 else
-   AC_MSG_NOTICE([TclKit supplied: ${with_tclkit} - generate Starpacks])
-   TDK_TCLKIT=`$CYGPATH "$with_tclkit"`
-   TDK_KIT_EXT="$EXEEXT"
+	AC_MSG_RESULT([found "${with_tclkit}"])
+	TDK_TCLKIT=`$CYGPATH "$with_tclkit"`
+	TDK_KIT_EXT="$EXEEXT"
 fi
 
 TDK_TCLSH_PROG=`$CYGPATH ${TCL_BIN_DIR}/../bin/tclsh${EXEEXT}`
@@ -63,35 +67,90 @@ AC_SUBST(TDK_KIT_EXT)
 AC_SUBST(TDK_TCLSH_PROG)
 AC_SUBST(TDK_WISH_PROG)
 
-AC_MSG_CHECKING([for required extensions])
-AC_CACHE_VAL(tdk_cv_missing_extensions, [
-dnl Check for list of dependencies by running the TclKit and
-dnl several require statements. Compile a list of missing packages
-dnl to present the user stored as a list in tdk_cv_missing_extensions.
-dnl For each app:
-dnl     1. Grep all "package require" statements from the app dir.
-dnl     2. Grep all "package require" statements from the lib dir.
-dnl     3. Do the same for "package provides" statements. Anything
-dnl     	 not provided internally must be available in the Kit *or*
-dnl	 within the distribution (when --with-tcl/--with-tk are
-dnl	 supplied).
-tdk_cv_missing_extensions=0
+AC_MSG_CHECKING([for required external packages])
+AC_CACHE_VAL(tdk_cv_required_pkgs, [
+	tdk_cv_required_pkgs=`$SHELL $srcdir/external_pkgs.sh "$srcdir"`
 ])
-
-if test "${tdk_cv_missing_extensions}" = "0" ; then
-   AC_MSG_RESULT([found all required extensions])
+if test -n "$tdk_cv_required_pkgs"; then
+	AC_MSG_RESULT([
+------------------------------
+$tdk_cv_required_pkgs
+------------------------------])
 else
-   AC_MSG_WARN([Missing some extensions])
+	AC_MSG_RESULT([none found])
 fi
 
-TDK_TAP_DIR=$($CYGPATH $(cd $srcdir; pwd))
-AC_SUBST(TDK_TAP_DIR)
-
-AC_CONFIG_SUBDIRS([
-   lib/tbcload
-   lib/tclcompiler
-   lib/tclparser
+AC_MSG_CHECKING([packages provided by "$TDK_TCLSH_PROG"])
+AC_CACHE_VAL(tdk_cv_distro_pkgs, [
+	tdk_cv_distro_pkgs=`echo "$tdk_cv_required_pkgs" | $TDK_TCLSH_PROG $srcdir/package_location.tcl`
 ])
+if test -n "$tdk_cv_distro_pkgs"; then
+	AC_MSG_RESULT([
+------------------------------
+$tdk_cv_distro_pkgs
+------------------------------])
+else
+	AC_MSG_RESULT([none])
+fi
+
+AC_MSG_CHECKING([packages provided by TclKit])
+AC_CACHE_VAL(tdk_cv_kit_pkgs, [
+	if test "$with_tclkit" = "no"; then
+		tdk_cv_kit_pkgs=
+	else
+		tdk_cv_kit_pkgs=`echo "$tdk_cv_required_pkgs" | $TDK_TCLKIT $srcdir/package_location.tcl`
+	fi
+])
+
+TDK_EXTRA_FILES=
+if test -n "$tdk_cv_kit_pkgs"; then
+	AC_MSG_RESULT([
+------------------------------
+$tdk_cv_kit_pkgs
+------------------------------])
+	find_extra_tclapp_globs() {
+		local missing=
+		local pkgname=
+		local pkgloc=
+		local copythese=
+		local extraglobs=
+		for pkg in $tdk_cv_required_pkgs; do
+			if ! test `echo "$tdk_cv_kit_pkgs" | grep -q "$pkg"`; then
+				missing="$missing $pkg"
+			fi
+		done
+		for pkg in $missing; do
+			for pair in $tdk_cv_distro_pkgs; do
+				pkgname=`echo "$pair" | cut -d= -f1`
+				pkgloc=`echo "$pair" | cut -d= -f2`
+				if test "$pkgname" = "$pkg"; then
+					copythese="$copythese $pkgloc"
+					break
+				fi
+			done
+		done
+		for dir in $copythese; do
+			for subdir in `find "$dir" -type d`; do
+				extraglobs="$extraglobs $subdir"
+			done
+		done
+		return "$extraglobs"
+	}
+#	TDK_EXTRA_FILES=`find_extra_tclapp_globs`
+	AC_MSG_NOTICE([
+------------------------------
+$TDK_EXTRA_FILES
+------------------------------])
+else
+	AC_MSG_RESULT([none])
+fi
+AC_SUBST(TDK_EXTRA_FILES)
+
+#AC_CONFIG_SUBDIRS([
+#   lib/tbcload
+#   lib/tclcompiler
+#   lib/tclparser
+#])
 
 AC_CONFIG_FILES([
    Makefile
