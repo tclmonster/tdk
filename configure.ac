@@ -104,7 +104,8 @@ AC_CACHE_VAL(tdk_cv_kit_pkgs, [
 	fi
 ])
 
-TDK_EXTRA_FILES=
+TDK_EXTRA_DISTRO_FILES_PREFIX=
+TDK_EXTRA_DISTRO_FILES=
 if test -n "$tdk_cv_kit_pkgs"; then
 	AC_MSG_RESULT([
 ------------------------------
@@ -121,10 +122,19 @@ $tdk_cv_kit_pkgs
 			fi
 		done
 
-		dnl Enclosing brackets prevent M4 from swallowing Awk brackets.
-		[
-			copythese="$(echo "$missing" | sed 's/ /\n/g' | $AWK "BEGIN { split(\"$tdk_cv_distro_pkgs\", tmp, \" \"); for (i in tmp) {match(tmp[i], /([^=]+)=(.+)/, m); distro_pkgs[m[1]] = m[2];}} {if (\$1 in distro_pkgs) print distro_pkgs[\$1]; }" | sort | uniq)"
-		]
+		copythese="$(echo "$missing" | sed 's/ /\n/g' | $AWK "\
+			BEGIN { \
+				split(\"$tdk_cv_distro_pkgs\", tmp, \" \"); \
+				for (i in tmp) { \
+					match(tmp[[i]], /([[^=]]+)=(.+)/, m); \
+					distro_pkgs[[m[1]]] = m[[2]]; \
+				} \
+			} { \
+				if (\$1 in distro_pkgs) { \
+					print distro_pkgs[[\$1]]; \
+				} \
+			}" \
+		| sort | uniq)"
 
 		for dir in $copythese; do
 			for subdir in $(find "$dir" -type d); do
@@ -133,25 +143,37 @@ $tdk_cv_kit_pkgs
 		done
 		echo "$extraglobs"
 	}
-	TDK_EXTRA_FILES="$( find_extra_tclapp_globs )"
-	if test -n "$TDK_EXTRA_FILES"; then
+	TDK_EXTRA_DISTRO_FILES="$( find_extra_tclapp_globs )"
+	if test -n "$TDK_EXTRA_DISTRO_FILES"; then
 		AC_MSG_RESULT([
 ------------------------------
-$TDK_EXTRA_FILES
+$TDK_EXTRA_DISTRO_FILES
 ------------------------------])
+	TDK_EXTRA_DISTRO_FILES_PREFIX="$($TDK_TCLSH_PROG <<'EOF'
+# Two levels up ensures the "lib" directory is *not* included
+# in the prefix—which ensures the resultant files will be
+# properly copied into the kit's "lib/application/lib"
+# directory.
+
+puts [[file dirname [file dirname $tcl_library]]]
+
+EOF
+)"
 	else
 		AC_MSG_RESULT([none])
 	fi
 else
 	AC_MSG_RESULT([none])
 fi
-AC_SUBST(TDK_EXTRA_FILES)
 
-#AC_CONFIG_SUBDIRS([
-#   lib/tbcload
-#   lib/tclcompiler
-#   lib/tclparser
-#])
+AC_SUBST(TDK_EXTRA_DISTRO_FILES_PREFIX)
+AC_SUBST(TDK_EXTRA_DISTRO_FILES)
+
+AC_CONFIG_SUBDIRS([
+	lib/tbcload
+	lib/tclcompiler
+	lib/tclparser
+])
 
 AC_CONFIG_FILES([
    Makefile

@@ -37,6 +37,9 @@ TDK_TCLKIT     = @TDK_TCLKIT@
 TDK_TCLSH_PROG = @TDK_TCLSH_PROG@
 TDK_WISH_PROG  = @TDK_WISH_PROG@
 
+TDK_EXTRA_DISTRO_FILES_PREFIX = @TDK_EXTRA_DISTRO_FILES_PREFIX@
+TDK_EXTRA_DISTRO_FILES        = @TDK_EXTRA_DISTRO_FILES@
+
 kext = @TDK_KIT_EXT@
 
 TDK_DEFAULT_APPS = \
@@ -146,12 +149,17 @@ DECL_WRAP_CMD = wrap_app() { \
 	for pkg in $(TDK_COMPILER_PKGS) $(TDK_INTERNAL_PKGS); do \
 		PACKAGES="$$PACKAGES -pkg $$pkg"; \
 	done; \
+	local DISTRO_FILES_PREFIX="$(TDK_EXTRA_DISTRO_FILES_PREFIX)"; \
+	if test -n "$$DISTRO_FILES_PREFIX"; then \
+		DISTRO_FILES_PREFIX="-relativeto $$DISTRO_FILES_PREFIX"; \
+	fi; \
 	TCLAPP_PKGPATH="$(srcdir)" \
 		$(TDK_TCLSH_PROG) $(srcdir)/app/tclapp/main.tcl \
 			-relativeto "$(srcdir)/app/$$APP_NAME" "$(srcdir)/app/$$APP_NAME/main.tcl" \
 			-relativeto "$(srcdir)/app/$$APP_NAME" $${APP_FILES_WITH_GLOB} \
 			$${PACKAGES} \
 			-relativeto "$(srcdir)" $${TOP_LEVEL_FILES} \
+			$$DISTRO_FILES_PREFIX $(TDK_EXTRA_DISTRO_FILES) \
 			$${WRAP_PREFIX_ARG} \
 			-out "$$OUTPUT"; \
 }
