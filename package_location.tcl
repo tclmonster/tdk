@@ -14,6 +14,7 @@ set re [string map [list %DIR% $distroLibDir] {(?:source|load) (%DIR%[^\s]+)}]
 
 foreach p $packages {
     if {! [catch {package ifneeded $p [package require $p]} res ropt]} {
+		set version [package require $p]
 		set staticExtension [regexp {load\s+\{\}} $res]
 		if {$staticExtension} {
 			set pkgDir NA
@@ -23,7 +24,7 @@ foreach p $packages {
 			set pkgDirName [lindex [file split [string map [list $distroLibDir/ {}] $path]] 0]
 			set pkgDir "${distroLibDir}/${pkgDirName}"
 		}
-		puts -nonewline "$p=$pkgDir "
+		puts -nonewline "$p=$version,$pkgDir "
 	}
 }
 

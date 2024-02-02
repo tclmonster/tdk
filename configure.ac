@@ -104,25 +104,56 @@ AC_CACHE_VAL(tdk_cv_kit_pkgs, [
 	fi
 ])
 
-TDK_EXTRA_DISTRO_FILES_PREFIX=
-TDK_EXTRA_DISTRO_FILES=
+TDK_EXTRA_DISTRO_PKGS=
 if test -n "$tdk_cv_kit_pkgs"; then
 	AC_MSG_RESULT([
 ------------------------------
 $tdk_cv_kit_pkgs
 ------------------------------])
-	AC_MSG_CHECKING([which files to copy into kit])
-	find_extra_tclapp_globs() {
+	AC_MSG_CHECKING([which packages to copy into kit])
+
+	distro_pkg_name() {
+		echo "$1" | awk -F= '{print $1}'
+	}
+
+	distro_pkg_version() {
+		echo "$1" | awk -F= '{print $2}' | awk -F, '{print $1}'
+	}
+
+	distro_pkg_path() {
+		echo "$1" | awk -F= '{print $2}' | awk -F, '{print $2}'
+	}
+
+	distro_ref_pkg_name() {
+		echo "$(distro_pkg_path "$1")__" | awk -F/ '{print $NF}' | sed -E 's@[[\.-]]@_@g'
+	}
+
+	distro_tap_append() {
+		echo "$1" >> $srcdir/DistroPackages.tap
+	}
+
+	distro_pkg_append() {
+		TDK_EXTRA_DISTRO_PKGS="${TDK_EXTRA_DISTRO_PKGS} $1"
+	}
+
+	generate_distro_tap_file() {
 		local missing=
-		local copythese=
-		local extraglobs=
+		local projects=
+		local pkgRef=
+		local pkgName=
+		local pkgPath=
+		local pkgVersion=
+
 		for pkg in $tdk_cv_required_pkgs; do
 			if ! echo "$tdk_cv_kit_pkgs" | grep -q "$pkg="; then
 				missing="$missing $pkg"
 			fi
 		done
 
-		copythese="$(echo "$missing" | sed 's/ /\n/g' | $AWK "\
+		# Collect list of missing packages which are provided
+		# by the Tcl distribution.
+		#
+		missing="$(echo "$missing" | sed 's/ /\n/g' | $AWK "\
 			BEGIN { \
 				split(\"$tdk_cv_distro_pkgs\", tmp, \" \"); \
 				for (i in tmp) { \
@@ -131,43 +162,82 @@ $tdk_cv_kit_pkgs
 				} \
 			} { \
 				if (\$1 in distro_pkgs) { \
-					print distro_pkgs[[\$1]]; \
+					printf \"%s=%s\\n\", \$1, distro_pkgs[[\$1]]; \
 				} \
 			}" \
 		| sort | uniq)"
 
-		for dir in $copythese; do
-			for subdir in $(find "$dir" -type d); do
-				extraglobs="$extraglobs $subdir/*"
-			done
-		done
-		echo "$extraglobs"
-	}
-	TDK_EXTRA_DISTRO_FILES="$( find_extra_tclapp_globs )"
-	if test -n "$TDK_EXTRA_DISTRO_FILES"; then
-		AC_MSG_RESULT([
-------------------------------
-$TDK_EXTRA_DISTRO_FILES
-------------------------------])
-	TDK_EXTRA_DISTRO_FILES_PREFIX="$($TDK_TCLSH_PROG <<'EOF'
-# Two levels up ensures the "lib" directory is *not* included
-# in the prefix—which ensures the resultant files will be
-# properly copied into the kit's "lib/application/lib"
-# directory.
+		cat <<'EOF' > $srcdir/DistroPackages.tap
+format  {TclDevKit Project File}
+fmtver  2.0
+fmttool {TclDevKit TclApp PackageDefinition} @tp_majorversion@.@tp_minorversion@
 
-puts [[file dirname [file dirname $tcl_library]]]
+##  Saved at : Sat Jan 27 15:19:26 AST 2024
+##  By       : bandoti
+
+########
+#####
+###
+##
+#
 
 EOF
-)"
+
+		# Since each package may contain sub-packages the files
+		# contained in a given directory only need to be specified
+		# once. Here the paths are associated with reference-packages.
+		#
+		for pkg in $missing; do
+			pkgPath="$(distro_pkg_path "$pkg")"
+			pkgRef="$(distro_ref_pkg_name "$pkg")"
+			if ! echo "$projects" | grep -q "$pkgRef"; then
+				distro_tap_append "Package	{$pkgRef 0.0}"
+				distro_tap_append "Hidden	{}"
+				distro_tap_append "Base	$pkgPath"
+
+				for file in $(find "$pkgPath" -type f); do
+					distro_tap_append "Path	$file"
+				done
+				projects="$projects $pkgRef"
+			fi
+		done
+
+		# Finally associate each package with its reference-package.
+		#
+		for pkg in $missing; do
+			pkgName="$(distro_pkg_name "$pkg")"
+			pkgVersion="$(distro_pkg_version "$pkg")"
+			pkgPath="$(distro_pkg_path "$pkg")"
+			pkgRef="$(distro_ref_pkg_name "$pkg")"
+
+			distro_tap_append "Package	{$pkgName $pkgVersion}"
+			distro_tap_append "See	$pkgRef"
+
+			distro_pkg_append "$pkgName"
+		done
+
+		cat <<'EOF' >> $srcdir/DistroPackages.tap
+
+#
+##
+###
+#####
+########
+
+EOF
+	}
+
+	generate_distro_tap_file
+
+	if test -n "$TDK_EXTRA_DISTRO_PKGS"; then
+		AC_MSG_RESULT([see DistroPackages.tap])
 	else
 		AC_MSG_RESULT([none])
 	fi
 else
 	AC_MSG_RESULT([none])
 fi
-
-AC_SUBST(TDK_EXTRA_DISTRO_FILES_PREFIX)
-AC_SUBST(TDK_EXTRA_DISTRO_FILES)
+AC_SUBST(TDK_EXTRA_DISTRO_PKGS)
 
 AC_CONFIG_SUBDIRS([
 	lib/tbcload
