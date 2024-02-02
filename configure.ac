@@ -39,7 +39,9 @@ TEA_ENABLE_SHARED
 TEA_CONFIG_CFLAGS
 TEA_ENABLE_SYMBOLS
 
-TDK_TAP_DIR=`$CYGPATH $(cd $srcdir; pwd)`
+AC_PROG_AWK
+
+TDK_TAP_DIR="$($CYGPATH $(cd $srcdir; pwd))"
 AC_SUBST(TDK_TAP_DIR)
 
 AC_MSG_CHECKING([for tclkit])
@@ -55,12 +57,12 @@ if test "$with_tclkit" = "no"; then
 	TDK_KIT_EXT=".tcl"
 else
 	AC_MSG_RESULT([found "${with_tclkit}"])
-	TDK_TCLKIT=`$CYGPATH "$with_tclkit"`
+	TDK_TCLKIT="$($CYGPATH "$with_tclkit")"
 	TDK_KIT_EXT="$EXEEXT"
 fi
 
-TDK_TCLSH_PROG=`$CYGPATH ${TCL_BIN_DIR}/../bin/tclsh${EXEEXT}`
-TDK_WISH_PROG=`$CYGPATH ${TCL_BIN_DIR}/../bin/wish${EXEEXT}`
+TDK_TCLSH_PROG="$($CYGPATH ${TCL_BIN_DIR}/../bin/tclsh${EXEEXT})"
+TDK_WISH_PROG="$($CYGPATH ${TCL_BIN_DIR}/../bin/wish${EXEEXT})"
 
 AC_SUBST(TDK_TCLKIT)
 AC_SUBST(TDK_KIT_EXT)
@@ -69,7 +71,7 @@ AC_SUBST(TDK_WISH_PROG)
 
 AC_MSG_CHECKING([for required external packages])
 AC_CACHE_VAL(tdk_cv_required_pkgs, [
-	tdk_cv_required_pkgs=`$SHELL $srcdir/external_pkgs.sh "$srcdir"`
+	tdk_cv_required_pkgs="$($SHELL $srcdir/external_pkgs.sh "$srcdir")"
 ])
 if test -n "$tdk_cv_required_pkgs"; then
 	AC_MSG_RESULT([
@@ -82,7 +84,7 @@ fi
 
 AC_MSG_CHECKING([packages provided by "$TDK_TCLSH_PROG"])
 AC_CACHE_VAL(tdk_cv_distro_pkgs, [
-	tdk_cv_distro_pkgs=`echo "$tdk_cv_required_pkgs" | $TDK_TCLSH_PROG $srcdir/package_location.tcl`
+	tdk_cv_distro_pkgs="$(echo "$tdk_cv_required_pkgs" | $TDK_TCLSH_PROG $srcdir/package_location.tcl)"
 ])
 if test -n "$tdk_cv_distro_pkgs"; then
 	AC_MSG_RESULT([
@@ -98,7 +100,7 @@ AC_CACHE_VAL(tdk_cv_kit_pkgs, [
 	if test "$with_tclkit" = "no"; then
 		tdk_cv_kit_pkgs=
 	else
-		tdk_cv_kit_pkgs=`echo "$tdk_cv_required_pkgs" | $TDK_TCLKIT $srcdir/package_location.tcl`
+		tdk_cv_kit_pkgs="$(echo "$tdk_cv_required_pkgs" | $TDK_TCLKIT $srcdir/package_location.tcl)"
 	fi
 ])
 
@@ -108,39 +110,38 @@ if test -n "$tdk_cv_kit_pkgs"; then
 ------------------------------
 $tdk_cv_kit_pkgs
 ------------------------------])
+	AC_MSG_CHECKING([which files to copy into kit])
 	find_extra_tclapp_globs() {
 		local missing=
-		local pkgname=
-		local pkgloc=
 		local copythese=
 		local extraglobs=
 		for pkg in $tdk_cv_required_pkgs; do
-			if ! test `echo "$tdk_cv_kit_pkgs" | grep -q "$pkg"`; then
+			if ! echo "$tdk_cv_kit_pkgs" | grep -q "$pkg="; then
 				missing="$missing $pkg"
 			fi
 		done
-		for pkg in $missing; do
-			for pair in $tdk_cv_distro_pkgs; do
-				pkgname=`echo "$pair" | cut -d= -f1`
-				pkgloc=`echo "$pair" | cut -d= -f2`
-				if test "$pkgname" = "$pkg"; then
-					copythese="$copythese $pkgloc"
-					break
-				fi
-			done
-		done
+
+		dnl Enclosing brackets prevent M4 from swallowing Awk brackets.
+		[
+			copythese="$(echo "$missing" | sed 's/ /\n/g' | $AWK "BEGIN { split(\"$tdk_cv_distro_pkgs\", tmp, \" \"); for (i in tmp) {match(tmp[i], /([^=]+)=(.+)/, m); distro_pkgs[m[1]] = m[2];}} {if (\$1 in distro_pkgs) print distro_pkgs[\$1]; }" | sort | uniq)"
+		]
+
 		for dir in $copythese; do
-			for subdir in `find "$dir" -type d`; do
-				extraglobs="$extraglobs $subdir"
+			for subdir in $(find "$dir" -type d); do
+				extraglobs="$extraglobs $subdir/*"
 			done
 		done
-		return "$extraglobs"
+		echo "$extraglobs"
 	}
-#	TDK_EXTRA_FILES=`find_extra_tclapp_globs`
-	AC_MSG_NOTICE([
+	TDK_EXTRA_FILES="$( find_extra_tclapp_globs )"
+	if test -n "$TDK_EXTRA_FILES"; then
+		AC_MSG_RESULT([
 ------------------------------
 $TDK_EXTRA_FILES
 ------------------------------])
+	else
+		AC_MSG_RESULT([none])
+	fi
 else
 	AC_MSG_RESULT([none])
 fi
