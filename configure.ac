@@ -1,9 +1,9 @@
 
-AC_INIT([tcl-dev-kit], [7.0])
+AC_INIT([tcl-dev-kit], [8.0])
 
 TEA_INIT([3.7])
 
-# There are three ways to invoke configure:
+# There are two ways to invoke configure:
 # 1. Supplying a full Tcl distribution (ActiveTcl, Magicsplat, BAWT).
 #    In this case it is expected that all dependencies save for "tclcompiler"
 #    and "tclparser" will be supplied by the distro. Running configure
@@ -16,12 +16,6 @@ TEA_INIT([3.7])
 #    TclKit as the "basekit" for generating the Starpack executable.
 #    A check for dependencies will be completed and anything missing
 #    from the TclKit will be supplied by the distribution.
-#
-# 3. Only supplying a TclKit.
-#    In this case, all Tcl Dev Kit applications will be be packed into
-#    Starpacks (skipping the compile steps mentioned in 1 above). This
-#    means that if dependencies are not statically linked to the TclKit
-#    or provided in the "tdkRoot/lib" directory the build will fail.
 #
 
 TEA_PATH_TCLCONFIG
@@ -71,7 +65,7 @@ AC_SUBST(TDK_WISH_PROG)
 
 AC_MSG_CHECKING([for required external packages])
 AC_CACHE_VAL(tdk_cv_required_pkgs, [
-	tdk_cv_required_pkgs="$($SHELL $srcdir/external_pkgs.sh "$srcdir")"
+	tdk_cv_required_pkgs="$($SHELL $srcdir/scripts/external_pkgs.sh "$srcdir")"
 ])
 if test -n "$tdk_cv_required_pkgs"; then
 	AC_MSG_RESULT([
@@ -84,7 +78,7 @@ fi
 
 AC_MSG_CHECKING([packages provided by "$TDK_TCLSH_PROG"])
 AC_CACHE_VAL(tdk_cv_distro_pkgs, [
-	tdk_cv_distro_pkgs="$(echo "$tdk_cv_required_pkgs" | $TDK_TCLSH_PROG $srcdir/package_location.tcl)"
+	tdk_cv_distro_pkgs="$(echo "$tdk_cv_required_pkgs" | $TDK_TCLSH_PROG $srcdir/scripts/package_location.tcl)"
 ])
 if test -n "$tdk_cv_distro_pkgs"; then
 	AC_MSG_RESULT([
@@ -100,7 +94,7 @@ AC_CACHE_VAL(tdk_cv_kit_pkgs, [
 	if test "$with_tclkit" = "no"; then
 		tdk_cv_kit_pkgs=
 	else
-		tdk_cv_kit_pkgs="$(echo "$tdk_cv_required_pkgs" | $TDK_TCLKIT $srcdir/package_location.tcl)"
+		tdk_cv_kit_pkgs="$(echo "$tdk_cv_required_pkgs" | $TDK_TCLKIT $srcdir/scripts/package_location.tcl)"
 	fi
 ])
 
@@ -129,13 +123,16 @@ $tdk_cv_kit_pkgs
 	}
 
 	distro_tap_header() {
-		cat <<'EOF' > $srcdir/DistroPackages.tap
+		local version="$PACKAGE_VERSION"
+		local timestamp="$(date)"
+		local user="$(id -un)"
+		cat <<EOF > $srcdir/DistroPackages.tap
 format  {TclDevKit Project File}
 fmtver  2.0
-fmttool {TclDevKit TclApp PackageDefinition} @tp_majorversion@.@tp_minorversion@
+fmttool {TclDevKit TclApp PackageDefinition} $version
 
-##  Saved at : Sat Jan 27 15:19:26 AST 2024
-##  By       : bandoti
+##  Saved at : $timestamp
+##  By       : $user
 
 ########
 #####
