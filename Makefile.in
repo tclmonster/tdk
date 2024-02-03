@@ -126,9 +126,11 @@ DECL_WRAP_CMD = wrap_app() { \
 	local APP_NAME=$$(echo "$$OUTPUT" | cut    -f1 -d '.'); \
 	local APP_EXT=$$(echo "$$OUTPUT"  | cut -s -f2 -d '.'); \
 	local WRAP_PREFIX_ARG= ; \
+	local DISTRO_PKGS= ; \
 	if test "$$APP_EXT" != "tcl"; then \
 		if test -n "@TDK_TCLKIT@"; then \
 			WRAP_PREFIX_ARG="-prefix @TDK_TCLKIT@"; \
+			DISTRO_PKGS="$(TDK_EXTRA_DISTRO_PKGS)"; \
 		else \
 			echo "Error: cannot build requested Starpack: \"$$OUTPUT\".\
 				  Please run \"configure --with-tclkit=...\"." 1>&2; \
@@ -145,7 +147,7 @@ DECL_WRAP_CMD = wrap_app() { \
 		APP_FILES_WITH_GLOB="$$APP_FILES_WITH_GLOB $${file}/*"; \
 	done; \
 	local PACKAGES= ; \
-	for pkg in $(TDK_EXTRA_DISTRO_PKGS) $(TDK_COMPILER_PKGS) $(TDK_INTERNAL_PKGS); do \
+	for pkg in $${DISTRO_PKGS} $(TDK_COMPILER_PKGS) $(TDK_INTERNAL_PKGS); do \
 		PACKAGES="$$PACKAGES -pkg $$pkg"; \
 	done; \
 	TCLAPP_PKGPATH="$(srcdir)" \
