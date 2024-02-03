@@ -118,10 +118,6 @@ $tdk_cv_kit_pkgs
 		echo "$1" | awk -F= '{print $2}' | awk -F, '{print $2}'
 	}
 
-	distro_ref_pkg_name() {
-		echo "$(distro_pkg_path "$1")__" | awk -F/ '{print $NF}' | sed -E 's@[[\.-]]@_@g'
-	}
-
 	distro_tap_header() {
 		local version="$PACKAGE_VERSION"
 		local timestamp="$(date)"
@@ -179,7 +175,7 @@ EOF
 
 		# Collect list of missing packages which are provided
 		# by the Tcl distribution.
-		#
+
 		missing="$(echo "$missing" | sed 's/ /\n/g' | $AWK "\
 			BEGIN { \
 				split(\"$tdk_cv_distro_pkgs\", tmp, \" \"); \
@@ -196,38 +192,57 @@ EOF
 
 		distro_tap_header
 
-		# Since each package may contain sub-packages the files
-		# contained in a given directory only need to be specified
-		# once. Here the paths are associated with "virtual" packages.
-		#
+		# Because packages may be nested only the first package which
+		# contains a given path will copy the files. Note that within
+		# the TAP file the logical ordering of packages may not be
+		# intuitive because it does not matter *which* package of
+		# a series of nested packages contains the files.
+
+		local completed=
+		local deferred=
 		for pkg in $missing; do
+			pkgName="$(distro_pkg_name "$pkg")"
 			pkgPath="$(distro_pkg_path "$pkg")"
-			pkgRef="$(distro_ref_pkg_name "$pkg")"
-			if ! echo "$projects" | grep -q "$pkgRef"; then
-				distro_tap_append "Package	{$pkgRef 0.0}"
-				distro_tap_append "Hidden	{}"
+			pkgVersion="$(distro_pkg_version "$pkg")"
+			if ! echo "$projects" | grep -Fq "$pkgName"; then
+				if echo "$completed" | grep -Fq "$pkgPath"; then
+					deferred="$deferred $pkg"
+					continue
+				fi
+				distro_tap_append "Package	{$pkgName $pkgVersion}"
 				distro_tap_append "Base	$pkgPath"
 
 				for file in $(find "$pkgPath" -type f); do
 					file="${file#"$pkgPath/"}"
 					distro_tap_append "Path	$file"
 				done
-				projects="$projects $pkgRef"
+
+				distro_pkg_append "$pkgName"
+
+				projects="$projects $pkgName"
+				completed="$completed $pkg"
 			fi
 		done
 
-		# Finally associate each package with its reference-package.
-		#
-		for pkg in $missing; do
+		# Remaining packages need only reference the files contained
+		# in the previously-populated package.
+
+		local refName=
+		local refPath=
+		for pkg in $deferred; do
 			pkgName="$(distro_pkg_name "$pkg")"
 			pkgVersion="$(distro_pkg_version "$pkg")"
 			pkgPath="$(distro_pkg_path "$pkg")"
-			pkgRef="$(distro_ref_pkg_name "$pkg")"
+			for refPkg in $completed; do
+				refPath="$(distro_pkg_path "$refPkg")"
+				refName="$(distro_pkg_name "$refPkg")"
+				if test "$refPath" = "$pkgPath"; then
+					distro_tap_append "Package	{$pkgName $pkgVersion}"
+					distro_tap_append "See	$refName"
 
-			distro_tap_append "Package	{$pkgName $pkgVersion}"
-			distro_tap_append "See	$pkgRef"
-
-			distro_pkg_append "$pkgName"
+					distro_pkg_append "$pkgName"
+				fi
+			done
 		done
 
 		distro_tap_footer
@@ -248,11 +263,7 @@ else
 fi
 AC_SUBST(TDK_EXTRA_DISTRO_PKGS)
 
-AC_CONFIG_SUBDIRS([
-	lib/tbcload
-	lib/tclcompiler
-	lib/tclparser
-])
+AC_CONFIG_SUBDIRS([lib/tbcload lib/tclcompiler lib/tclparser])
 
 AC_CONFIG_FILES([
    Makefile
