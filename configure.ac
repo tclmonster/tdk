@@ -110,7 +110,7 @@ if test -n "$tdk_cv_kit_pkgs"; then
 ------------------------------
 $tdk_cv_kit_pkgs
 ------------------------------])
-	AC_MSG_CHECKING([which packages to copy into kit])
+	AC_MSG_NOTICE([creating DistroPackages.tap])
 
 	distro_pkg_name() {
 		echo "$1" | awk -F= '{print $1}'
@@ -126,6 +126,36 @@ $tdk_cv_kit_pkgs
 
 	distro_ref_pkg_name() {
 		echo "$(distro_pkg_path "$1")__" | awk -F/ '{print $NF}' | sed -E 's@[[\.-]]@_@g'
+	}
+
+	distro_tap_header() {
+		cat <<'EOF' > $srcdir/DistroPackages.tap
+format  {TclDevKit Project File}
+fmtver  2.0
+fmttool {TclDevKit TclApp PackageDefinition} @tp_majorversion@.@tp_minorversion@
+
+##  Saved at : Sat Jan 27 15:19:26 AST 2024
+##  By       : bandoti
+
+########
+#####
+###
+##
+#
+
+EOF
+	}
+
+	distro_tap_footer() {
+		cat <<'EOF' >> $srcdir/DistroPackages.tap
+
+#
+##
+###
+#####
+########
+
+EOF
 	}
 
 	distro_tap_append() {
@@ -167,25 +197,11 @@ $tdk_cv_kit_pkgs
 			}" \
 		| sort | uniq)"
 
-		cat <<'EOF' > $srcdir/DistroPackages.tap
-format  {TclDevKit Project File}
-fmtver  2.0
-fmttool {TclDevKit TclApp PackageDefinition} @tp_majorversion@.@tp_minorversion@
-
-##  Saved at : Sat Jan 27 15:19:26 AST 2024
-##  By       : bandoti
-
-########
-#####
-###
-##
-#
-
-EOF
+		distro_tap_header
 
 		# Since each package may contain sub-packages the files
 		# contained in a given directory only need to be specified
-		# once. Here the paths are associated with reference-packages.
+		# once. Here the paths are associated with "virtual" packages.
 		#
 		for pkg in $missing; do
 			pkgPath="$(distro_pkg_path "$pkg")"
@@ -196,6 +212,7 @@ EOF
 				distro_tap_append "Base	$pkgPath"
 
 				for file in $(find "$pkgPath" -type f); do
+					file="${file#"$pkgPath/"}"
 					distro_tap_append "Path	$file"
 				done
 				projects="$projects $pkgRef"
@@ -216,23 +233,18 @@ EOF
 			distro_pkg_append "$pkgName"
 		done
 
-		cat <<'EOF' >> $srcdir/DistroPackages.tap
-
-#
-##
-###
-#####
-########
-
-EOF
+		distro_tap_footer
 	}
 
 	generate_distro_tap_file
 
 	if test -n "$TDK_EXTRA_DISTRO_PKGS"; then
-		AC_MSG_RESULT([see DistroPackages.tap])
+		AC_MSG_NOTICE([including packages from DistroPackages.tap
+------------------------------
+$TDK_EXTRA_DISTRO_PKGS
+------------------------------])
 	else
-		AC_MSG_RESULT([none])
+		AC_MSG_WARN([no packages to include from DistroPackages.tap])
 	fi
 else
 	AC_MSG_RESULT([none])
