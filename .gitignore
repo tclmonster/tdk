@@ -8,3 +8,13 @@ build/
 TclCompiler.tap
 TdkPackages.tap
 DistroPackages.tap
+
+check*
+comp*
+debug*
+inspector*
+lsmfs*
+tape*
+tclapp*
+vfse*
+xref*
