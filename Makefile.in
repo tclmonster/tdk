@@ -86,6 +86,7 @@ TDK_INTERNAL_PKGS = \
 	cmatch \
 	engine \
 	debugger \
+	nub \
 	view \
 	vtree \
 	help \

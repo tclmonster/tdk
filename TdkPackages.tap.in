@@ -956,6 +956,12 @@ Package {Timer 1.0}
 See     tdk_lib_wub84
 Package {dictcompat 0.1}
 See     tdk_lib_wub84
+Package {nub 1.0}
+Base    @TDK_TAP_DIR@/lib/dbg_nub
+Path    nub.tcl
+Path    nubloader.tcl
+Path    pkgIndex.tcl
+Path    teapot.txt
 
 #
 ##
