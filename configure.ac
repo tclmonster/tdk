@@ -122,6 +122,10 @@ distro_pkg_path() {
 	echo "$1" | awk -F= '{print $2}' | awk -F, '{print $2}'
 }
 
+distro_pkg_refname() {
+	echo "$(distro_pkg_path "$1")" | awk -F/ '{print $NF}'
+}
+
 distro_tap_header() {
 	local version="$PACKAGE_VERSION"
 	local timestamp="$(date)"
@@ -165,11 +169,6 @@ distro_pkg_append() {
 
 gen_distro_tap_file_and_pkg_list() {
 	local missing=
-	local projects=
-	local pkgRef=
-	local pkgName=
-	local pkgPath=
-	local pkgVersion=
 
 	for pkg in $tdk_cv_required_pkgs; do
 		if ! echo "$tdk_cv_kit_pkgs" | grep -q "$pkg="; then
@@ -202,18 +201,31 @@ gen_distro_tap_file_and_pkg_list() {
 	# intuitive because it does not matter *which* package of
 	# a series of nested packages contains the files.
 
-	local completed=
+	local pkgName=
+	local pkgPath=
+	local pkgVersion=
+
+	local refName=
+	local refPath=
+
 	local deferred=
+
 	for pkg in $missing; do
 		pkgName="$(distro_pkg_name "$pkg")"
 		pkgPath="$(distro_pkg_path "$pkg")"
-		pkgVersion="$(distro_pkg_version "$pkg")"
-		if ! echo "$projects" | grep -Fq "$pkgName"; then
-			if echo "$completed" | grep -Fq "$pkgPath"; then
-				deferred="$deferred $pkg"
-				continue
-			fi
-			distro_tap_append "Package	{$pkgName $pkgVersion}"
+
+		if echo "$deferred" | grep -Fq "$pkgPath"; then
+			deferred="$deferred $pkg"
+
+		else
+
+			# First generate the ref package based on its folder name.
+			# The version (Package's 2nd element) is empty to ensure
+			# that the directory is copied as-is.
+
+			refName="$(distro_pkg_refname "$pkg")"
+			distro_tap_append "Package	{$refName {}}"
+			distro_tap_append "Hidden	{}"
 			distro_tap_append "Base	$pkgPath"
 
 			for file in $(find "$pkgPath" -type f); do
@@ -221,32 +233,27 @@ gen_distro_tap_file_and_pkg_list() {
 				distro_tap_append "Path	$file"
 			done
 
-			distro_pkg_append "$pkgName"
+			# Then add the actual project and refer back to ref package
 
-			projects="$projects $pkgName"
-			completed="$completed $pkg"
+			pkgVersion="$(distro_pkg_version "$pkg")"
+			distro_tap_append "Package	{$pkgName $pkgVersion}"
+			distro_tap_append "See	$refName"
+			distro_pkg_append "$pkgName"
 		fi
 	done
 
-	# Remaining packages need only reference the files contained
-	# in the previously-populated package.
+	# Remaining packages need only refer back to ref package
 
-	local refName=
-	local refPath=
 	for pkg in $deferred; do
 		pkgName="$(distro_pkg_name "$pkg")"
 		pkgVersion="$(distro_pkg_version "$pkg")"
 		pkgPath="$(distro_pkg_path "$pkg")"
-		for refPkg in $completed; do
-			refPath="$(distro_pkg_path "$refPkg")"
-			refName="$(distro_pkg_name "$refPkg")"
-			if test "$refPath" = "$pkgPath"; then
-				distro_tap_append "Package	{$pkgName $pkgVersion}"
-				distro_tap_append "See	$refName"
+		refName="$(distro_pkg_refname "$pkg")"
 
-				distro_pkg_append "$pkgName"
-			fi
-		done
+		distro_tap_append "Package	{$pkgName $pkgVersion}"
+		distro_tap_append "See	$refName"
+
+		distro_pkg_append "$pkgName"
 	done
 
 	distro_tap_footer
