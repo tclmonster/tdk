@@ -5,26 +5,39 @@
 # ### ######### ###########################
 
 package require starkit
-if {"unwrapped" eq [starkit::startup]} {
-    # Unwrapped call is during build - tap scan/generate.  Other
-    # unwrapped calls are during development from within the local
-    # perforce depot area. Slightly different location of lib dir.
-    # Hence we use two stanza's to define an externa lib directory.
-    # Debug output is allowed, actually sort of wanted to be sure of
-    # package locations.
+if {! [info exists ::starkit::mode]} {
+starkit::startup
+}
 
-    puts stderr unwrapped\n[join $auto_path \n\t]
+switch -exact -- $::starkit::mode {
+    sourced   {}
+    unwrapped {
+        # Unwrapped call is during build - tap scan/generate.  Other
+        # unwrapped calls are during development from within the local
+        # perforce depot area. Slightly different location of lib dir.
+        # Hence we use two stanza's to define an externa lib directory.
+        # Debug output is allowed, actually sort of wanted to be sure of
+        # package locations.
 
-    namespace eval ::tcldevkit { variable debug_require 0 }
-    namespace eval ::tcldevkit { variable debug_source  0 }
-    namespace eval ::tcldevkit { variable dump_packages 0 }
-    namespace eval ::tcldevkit { variable dump_stack    0 }
+        puts stderr unwrapped\n[join $auto_path \n\t]
 
-    lappend auto_path [file join [file dirname [file dirname $::starkit::topdir]] lib]
+        namespace eval ::tcldevkit { variable debug_require 0 }
+        namespace eval ::tcldevkit { variable debug_source  0 }
+        namespace eval ::tcldevkit { variable dump_packages 0 }
+        namespace eval ::tcldevkit { variable dump_stack    0 }
 
-} else {
-    # Path expected after wrapping with TclApp
-    lappend auto_path [file join $::starkit::topdir lib application lib]
+        lappend auto_path [file join \
+            [file dirname [file dirname $::starkit::topdir]] lib]
+    }
+    starkit  -
+    starpack {
+        # Path expected after wrapping with TclApp
+        lappend auto_path [file join $::starkit::topdir lib application lib] \
+            [file join $::starkit::topdir lib]
+    }
+    default {
+        error "Unknown run mode $::starkit::mode"
+    }
 }
 
 package require tdk_appstartup

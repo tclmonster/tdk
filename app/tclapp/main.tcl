@@ -21,10 +21,6 @@ switch -exact -- $::starkit::mode {
         # Debug output is allowed, actually sort of wanted to be sure of
         # package locations.
 
-        #package require teapot::link
-        #::teapot::link::use ~/Abuild/lib/teapot-build
-        #::teapot::link::use ~/Abuild/lib/teapot-build-save-core
-
         puts stderr unwrapped\n[join $auto_path \n\t]
 
         namespace eval ::tcldevkit { variable debug_require 0 }
