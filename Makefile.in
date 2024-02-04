@@ -128,14 +128,16 @@ DECL_WRAP_CMD = wrap_app() { \
 	local WRAP_PREFIX_ARG= ; \
 	local DISTRO_PKGS= ; \
 	if test "$$APP_EXT" != "tcl"; then \
-		if test -n "@TDK_TCLKIT@"; then \
-			WRAP_PREFIX_ARG="-prefix @TDK_TCLKIT@"; \
+		if test -n "$(TDK_TCLKIT)"; then \
+			WRAP_PREFIX_ARG="-prefix "$(TDK_TCLKIT)""; \
 			DISTRO_PKGS="$(TDK_EXTRA_DISTRO_PKGS)"; \
 		else \
 			echo "Error: cannot build requested Starpack: \"$$OUTPUT\".\
 				  Please run \"configure --with-tclkit=...\"." 1>&2; \
 			exit 1; \
 		fi; \
+	else \
+		WRAP_PREFIX_ARG="-interpreter "$(TDK_TCLSH_PROG)""; \
 	fi; \
 	local TOP_LEVEL_FILES= ; \
 	for file in "$(srcdir)/artwork" "$(srcdir)/data/images"; do \

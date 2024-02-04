@@ -97,32 +97,36 @@ AC_CACHE_VAL(tdk_cv_kit_pkgs, [
 		tdk_cv_kit_pkgs="$(echo "$tdk_cv_required_pkgs" | $TDK_TCLKIT $srcdir/scripts/package_location.tcl)"
 	fi
 ])
-
-TDK_EXTRA_DISTRO_PKGS=
 if test -n "$tdk_cv_kit_pkgs"; then
 	AC_MSG_RESULT([
 ------------------------------
 $tdk_cv_kit_pkgs
 ------------------------------])
-	AC_MSG_NOTICE([creating DistroPackages.tap])
+else
+	AC_MSG_RESULT([none])
+fi
 
-	distro_pkg_name() {
-		echo "$1" | awk -F= '{print $1}'
-	}
+TDK_EXTRA_DISTRO_PKGS=
+if test "$with_tclkit" != "no" -a -n "$tdk_cv_distro_pkgs"; then
+AC_MSG_NOTICE([creating DistroPackages.tap])
 
-	distro_pkg_version() {
-		echo "$1" | awk -F= '{print $2}' | awk -F, '{print $1}'
-	}
+distro_pkg_name() {
+	echo "$1" | awk -F= '{print $1}'
+}
 
-	distro_pkg_path() {
-		echo "$1" | awk -F= '{print $2}' | awk -F, '{print $2}'
-	}
+distro_pkg_version() {
+	echo "$1" | awk -F= '{print $2}' | awk -F, '{print $1}'
+}
 
-	distro_tap_header() {
-		local version="$PACKAGE_VERSION"
-		local timestamp="$(date)"
-		local user="$(id -un)"
-		cat <<EOF > $srcdir/DistroPackages.tap
+distro_pkg_path() {
+	echo "$1" | awk -F= '{print $2}' | awk -F, '{print $2}'
+}
+
+distro_tap_header() {
+	local version="$PACKAGE_VERSION"
+	local timestamp="$(date)"
+	local user="$(id -un)"
+	cat <<EOF > $srcdir/DistroPackages.tap
 format  {TclDevKit Project File}
 fmtver  2.0
 fmttool {TclDevKit TclApp PackageDefinition} $version
@@ -137,10 +141,10 @@ fmttool {TclDevKit TclApp PackageDefinition} $version
 #
 
 EOF
-	}
+}
 
-	distro_tap_footer() {
-		cat <<'EOF' >> $srcdir/DistroPackages.tap
+distro_tap_footer() {
+	cat <<'EOF' >> $srcdir/DistroPackages.tap
 
 #
 ##
@@ -149,118 +153,117 @@ EOF
 ########
 
 EOF
-	}
+}
 
-	distro_tap_append() {
-		echo "$1" >> $srcdir/DistroPackages.tap
-	}
+distro_tap_append() {
+	echo "$1" >> $srcdir/DistroPackages.tap
+}
 
-	distro_pkg_append() {
-		TDK_EXTRA_DISTRO_PKGS="${TDK_EXTRA_DISTRO_PKGS} $1"
-	}
+distro_pkg_append() {
+	TDK_EXTRA_DISTRO_PKGS="${TDK_EXTRA_DISTRO_PKGS} $1"
+}
 
-	generate_distro_tap_file() {
-		local missing=
-		local projects=
-		local pkgRef=
-		local pkgName=
-		local pkgPath=
-		local pkgVersion=
+gen_distro_tap_file_and_pkg_list() {
+	local missing=
+	local projects=
+	local pkgRef=
+	local pkgName=
+	local pkgPath=
+	local pkgVersion=
 
-		for pkg in $tdk_cv_required_pkgs; do
-			if ! echo "$tdk_cv_kit_pkgs" | grep -q "$pkg="; then
-				missing="$missing $pkg"
+	for pkg in $tdk_cv_required_pkgs; do
+		if ! echo "$tdk_cv_kit_pkgs" | grep -q "$pkg="; then
+			missing="$missing $pkg"
+		fi
+	done
+
+	# Collect list of missing packages which are provided
+	# by the Tcl distribution.
+
+	missing="$(echo "$missing" | sed 's/ /\n/g' | $AWK "\
+		BEGIN { \
+			split(\"$tdk_cv_distro_pkgs\", tmp, \" \"); \
+			for (i in tmp) { \
+				match(tmp[[i]], /([[^=]]+)=(.+)/, m); \
+				distro_pkgs[[m[1]]] = m[[2]]; \
+			} \
+		} { \
+			if (\$1 in distro_pkgs) { \
+				printf \"%s=%s\\n\", \$1, distro_pkgs[[\$1]]; \
+			} \
+		}" \
+	| sort | uniq)"
+
+	distro_tap_header
+
+	# Because packages may be nested only the first package which
+	# contains a given path will copy the files. Note that within
+	# the TAP file the logical ordering of packages may not be
+	# intuitive because it does not matter *which* package of
+	# a series of nested packages contains the files.
+
+	local completed=
+	local deferred=
+	for pkg in $missing; do
+		pkgName="$(distro_pkg_name "$pkg")"
+		pkgPath="$(distro_pkg_path "$pkg")"
+		pkgVersion="$(distro_pkg_version "$pkg")"
+		if ! echo "$projects" | grep -Fq "$pkgName"; then
+			if echo "$completed" | grep -Fq "$pkgPath"; then
+				deferred="$deferred $pkg"
+				continue
 			fi
-		done
+			distro_tap_append "Package	{$pkgName $pkgVersion}"
+			distro_tap_append "Base	$pkgPath"
 
-		# Collect list of missing packages which are provided
-		# by the Tcl distribution.
+			for file in $(find "$pkgPath" -type f); do
+				file="${file#"$pkgPath/"}"
+				distro_tap_append "Path	$file"
+			done
 
-		missing="$(echo "$missing" | sed 's/ /\n/g' | $AWK "\
-			BEGIN { \
-				split(\"$tdk_cv_distro_pkgs\", tmp, \" \"); \
-				for (i in tmp) { \
-					match(tmp[[i]], /([[^=]]+)=(.+)/, m); \
-					distro_pkgs[[m[1]]] = m[[2]]; \
-				} \
-			} { \
-				if (\$1 in distro_pkgs) { \
-					printf \"%s=%s\\n\", \$1, distro_pkgs[[\$1]]; \
-				} \
-			}" \
-		| sort | uniq)"
+			distro_pkg_append "$pkgName"
 
-		distro_tap_header
+			projects="$projects $pkgName"
+			completed="$completed $pkg"
+		fi
+	done
 
-		# Because packages may be nested only the first package which
-		# contains a given path will copy the files. Note that within
-		# the TAP file the logical ordering of packages may not be
-		# intuitive because it does not matter *which* package of
-		# a series of nested packages contains the files.
+	# Remaining packages need only reference the files contained
+	# in the previously-populated package.
 
-		local completed=
-		local deferred=
-		for pkg in $missing; do
-			pkgName="$(distro_pkg_name "$pkg")"
-			pkgPath="$(distro_pkg_path "$pkg")"
-			pkgVersion="$(distro_pkg_version "$pkg")"
-			if ! echo "$projects" | grep -Fq "$pkgName"; then
-				if echo "$completed" | grep -Fq "$pkgPath"; then
-					deferred="$deferred $pkg"
-					continue
-				fi
+	local refName=
+	local refPath=
+	for pkg in $deferred; do
+		pkgName="$(distro_pkg_name "$pkg")"
+		pkgVersion="$(distro_pkg_version "$pkg")"
+		pkgPath="$(distro_pkg_path "$pkg")"
+		for refPkg in $completed; do
+			refPath="$(distro_pkg_path "$refPkg")"
+			refName="$(distro_pkg_name "$refPkg")"
+			if test "$refPath" = "$pkgPath"; then
 				distro_tap_append "Package	{$pkgName $pkgVersion}"
-				distro_tap_append "Base	$pkgPath"
-
-				for file in $(find "$pkgPath" -type f); do
-					file="${file#"$pkgPath/"}"
-					distro_tap_append "Path	$file"
-				done
+				distro_tap_append "See	$refName"
 
 				distro_pkg_append "$pkgName"
-
-				projects="$projects $pkgName"
-				completed="$completed $pkg"
 			fi
 		done
+	done
 
-		# Remaining packages need only reference the files contained
-		# in the previously-populated package.
+	distro_tap_footer
+}
 
-		local refName=
-		local refPath=
-		for pkg in $deferred; do
-			pkgName="$(distro_pkg_name "$pkg")"
-			pkgVersion="$(distro_pkg_version "$pkg")"
-			pkgPath="$(distro_pkg_path "$pkg")"
-			for refPkg in $completed; do
-				refPath="$(distro_pkg_path "$refPkg")"
-				refName="$(distro_pkg_name "$refPkg")"
-				if test "$refPath" = "$pkgPath"; then
-					distro_tap_append "Package	{$pkgName $pkgVersion}"
-					distro_tap_append "See	$refName"
+gen_distro_tap_file_and_pkg_list
 
-					distro_pkg_append "$pkgName"
-				fi
-			done
-		done
-
-		distro_tap_footer
-	}
-
-	generate_distro_tap_file
-
-	if test -n "$TDK_EXTRA_DISTRO_PKGS"; then
-		AC_MSG_NOTICE([including packages from DistroPackages.tap
+if test -n "$TDK_EXTRA_DISTRO_PKGS"; then
+	AC_MSG_NOTICE([including packages from DistroPackages.tap
 ------------------------------
 $TDK_EXTRA_DISTRO_PKGS
 ------------------------------])
-	else
-		AC_MSG_WARN([no packages to include from DistroPackages.tap])
-	fi
 else
-	AC_MSG_RESULT([none])
+	AC_MSG_WARN([no packages to include from DistroPackages.tap])
 fi
+fi
+
 AC_SUBST(TDK_EXTRA_DISTRO_PKGS)
 
 AC_CONFIG_SUBDIRS([lib/tbcload lib/tclcompiler lib/tclparser])
