@@ -1,3 +1,6 @@
+# Copyright (c) 2024 Mason McParlane
+# Released under the BSD-3 license. See LICENSE file for details.
+#
 
 AC_INIT([tcl-dev-kit], [8.0])
 

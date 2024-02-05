@@ -1,4 +1,16 @@
 #!/usr/bin/env tclsh
+#
+# Copyright (c) 2024 Mason McParlane
+# Released under the BSD-3 license. See LICENSE file for details.
+#
+# This script is intended to be used by configure in order to
+# locate a list of Tcl packages, by package name, in the invoked
+# Tcl shell.
+#
+# In the future it may make sense to combine this with `external_pkgs.sh`
+# and add the capability to TclApp so dependencies may be packaged
+# during the wrap process.
+#
 
 set packages {}
 if {$argc > 0} {
