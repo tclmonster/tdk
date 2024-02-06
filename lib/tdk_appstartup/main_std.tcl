@@ -30,12 +30,10 @@ if {"unwrapped" eq $::starkit::mode} {
 
 } else {
 
-    # After wrapping with TclApp the $tdkRoot/lib and $appRoot/lib files
-    # will be consolidated into "...kit.exe/lib/application/lib" to
-    # separate it from the top-level kit libraries (and dependencies
-    # pulled from TAP/Teapot repos).
+    # Wrapped applications use the default TclApp anchor so all
+    # application-specific files are stored in lib/application.
     variable appRoot [file join $::starkit::topdir lib application]
-    variable tdkRoot $appRoot
+    variable tdkRoot $::starkit::topdir
 }
 
 variable imageDir   [file join $tdkRoot data images]

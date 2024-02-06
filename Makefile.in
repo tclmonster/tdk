@@ -144,7 +144,7 @@ DECL_WRAP_CMD = wrap_app() { \
 	else \
 		WRAP_PREFIX_ARG="-interpreter "$(TDK_TCLSH_PROG)""; \
 	fi; \
-	local TOP_LEVEL_FILES= ; \
+	local TOP_LEVEL_FILES="$(srcdir)/LICENSE"; \
 	for file in "$(srcdir)/artwork" "$(srcdir)/data/images"; do \
 		TOP_LEVEL_FILES="$$TOP_LEVEL_FILES $${file}/*"; \
 	done; \
@@ -162,7 +162,7 @@ DECL_WRAP_CMD = wrap_app() { \
 			-relativeto "$(srcdir)/app/$$APP_NAME" "$(srcdir)/app/$$APP_NAME/main.tcl" \
 			-relativeto "$(srcdir)/app/$$APP_NAME" $${APP_FILES_WITH_GLOB} \
 			$${PACKAGES} \
-			-relativeto "$(srcdir)" $${TOP_LEVEL_FILES} \
+			-anchor "" -relativeto "$(srcdir)" $${TOP_LEVEL_FILES} \
 			$${WRAP_PREFIX_ARG} \
 			-out "$$OUTPUT"; \
 }
