@@ -62,6 +62,7 @@ Simplify development with tools for finding and fixing bugs, managing complex co
     * treectrl
     * Tktable
     * tDOM
+    * sqlite3
 
 3. Install [MSYS2](https://www.msys2.org/).
 
