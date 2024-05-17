@@ -12,17 +12,17 @@ Simplify development with tools for finding and fixing bugs, managing complex co
 
    * app - application sources, including main entry points. Some
      debug helper code which can be sourced by apps.
-   
+
    * data - Images used by the apps.
-   
+
    * docs - Internal dev notes and the official documentation.
-   
+
    * lib - All the supporting packages. Some overlap with the `teapot`
      project.
-   
+
    * misc - A hack-week project, incomplete, which never made it into
      the product.
-   
+
    * pkg-src - Sources for the `win32 package. Written in C for access
      to some Windows system information (mainly paths).
 
@@ -46,10 +46,53 @@ Simplify development with tools for finding and fixing bugs, managing complex co
      For wrapped execution the original build system put the file
      `main_std.tcl` into the app as `ms.tcl` and added the splash
      setup code referencing the wrapped image.
-     
+
+# Building
+
+## Windows
+
+   1. Download an [Active Tcl](https://www.activestate.com/products/tcl/) distribution. The
+     following dependencies must be added to the base install using either the web UI or
+     the `state` package manager:
+
+        * Trf
+	* Img
+	* tklib
+	* bwidget
+	* treectrl
+	* Tktable
+	* tDOM
+
+   2. Install [MSYS2](https://www.msys2.org/).
+
+   3. Open a UCRT64 terminal (_Start > MSYS2 > MSYS2 UCRT64_) and install the
+     build tools:
+
+     ```sh
+     pacman -S git mingw-w64-ucrt-x86_64-gcc autotools
+
+     ```
+
+   4. Clone the TDK repository and initialize submodules (tbcload, tclcompiler, tclparser):
+
+    ```sh
+    git clone https://github.com/ActiveState/tdk.git
+    cd tdk
+    git submodule update --init --recursive
+    ```
+
+   5. Build TDK and wrap each application as a separate starkit. Note: it is also possible to
+    build the applications as starpacks (standalone executables) by supplying the
+    `--with-tclkit` flag to configure along with a path to a base tclkit.
+
+    ```sh
+    ./configure --with-tcl=C:/ActiveTcl/lib
+    make
+    ```
+
+
 # License
 
 Copyright (c) 2018 ActiveState Software
 
 Tcl Dev Kit (TDK) is released under the BSD-3 license. See LICENSE file for details.
-
