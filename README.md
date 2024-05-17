@@ -54,7 +54,8 @@ Simplify development with tools for finding and fixing bugs, managing complex co
 1. Download an [Active Tcl](https://www.activestate.com/products/tcl/) distribution.
    The following dependencies must be added to the base install using either the web UI
    or the `state` package manager:
-	* Trf
+    * tclvfs
+    * Trf
     * Img
     * tklib
     * bwidget
