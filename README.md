@@ -51,45 +51,38 @@ Simplify development with tools for finding and fixing bugs, managing complex co
 
 ## Windows
 
-   1. Download an [Active Tcl](https://www.activestate.com/products/tcl/) distribution. The
-     following dependencies must be added to the base install using either the web UI or
-     the `state` package manager:
+1. Download an [Active Tcl](https://www.activestate.com/products/tcl/) distribution.
+   The following dependencies must be added to the base install using either the web UI
+   or the `state` package manager:
+	* Trf
+    * Img
+    * tklib
+    * bwidget
+    * treectrl
+    * Tktable
+    * tDOM
 
-        * Trf
-	* Img
-	* tklib
-	* bwidget
-	* treectrl
-	* Tktable
-	* tDOM
+3. Install [MSYS2](https://www.msys2.org/).
 
-   2. Install [MSYS2](https://www.msys2.org/).
-
-   3. Open a UCRT64 terminal (_Start > MSYS2 > MSYS2 UCRT64_) and install the
-     build tools:
-
-     ```sh
-     pacman -S git mingw-w64-ucrt-x86_64-gcc autotools
-
+4. Open a UCRT64 terminal (_Start > MSYS2 > MSYS2 UCRT64_) and install the build tools:
+    ```sh
+    pacman -S git mingw-w64-ucrt-x86_64-gcc autotools
      ```
 
-   4. Clone the TDK repository and initialize submodules (tbcload, tclcompiler, tclparser):
-
-    ```sh
+5. Clone the TDK repository and initialize submodules (tbcload, tclcompiler, tclparser):
+	```sh
     git clone https://github.com/ActiveState/tdk.git
     cd tdk
     git submodule update --init --recursive
     ```
 
-   5. Build TDK and wrap each application as a separate starkit. Note: it is also possible to
-    build the applications as starpacks (standalone executables) by supplying the
-    `--with-tclkit` flag to configure along with a path to a base tclkit.
-
-    ```sh
-    ./configure --with-tcl=C:/ActiveTcl/lib
-    make
-    ```
-
+6. Build TDK and wrap each application as a separate starkit.
+	```sh
+	./configure --with-tcl=C:/ActiveTcl/lib
+	make
+	```
+	_Note: it is also possible to build the applications as starpacks (standalone executables)
+	by supplying the `--with-tclkit` flag to configure along with a path to a base tclkit._
 
 # License
 
