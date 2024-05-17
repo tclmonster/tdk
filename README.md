@@ -63,6 +63,7 @@ Simplify development with tools for finding and fixing bugs, managing complex co
     * Tktable
     * tDOM
     * sqlite3
+    * metakit
 
 3. Install [MSYS2](https://www.msys2.org/).
 
