@@ -14,7 +14,6 @@
 # Meta require     teapot::listspec
 # Meta require     teapot::metadata::index::sqlite
 # Meta require     teapot::reference
-# Meta require     Trf
 # Meta require     uri
 # Meta require     htmlparse
 # @@ Meta End
@@ -41,7 +40,6 @@ package require teapot::listspec                ; # Spec handling
 package require teapot::reference               ; # Reference handling
 package require teapot::config                  ; # Teapot client configuration
 package require teapot::metadata::index::sqlite ; # Database used when local cache is present
-package require Trf
 package require autoproxy                       ; # Http proxying
 package require fileutil
 package require htmlparse                       ; # For StripTags
@@ -834,7 +832,7 @@ snit::type            ::repository::proxy {
 	    lappend command \
 		-headers [list Authorization \
 			      [concat "Basic" \
-				   [base64::encode \
+				   [binary encode base64 \
 				       [join $options(-credentials) :]]]]
 	}
 

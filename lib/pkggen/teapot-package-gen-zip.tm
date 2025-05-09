@@ -10,7 +10,6 @@
 # Meta require     teapot::metadata::container
 # Meta require     teapot::metadata::write
 # Meta require     teapot::package::gen::pkgIndex
-# Meta require     zipfile::encode
 # @@ Meta End
 
 # -*- tcl -*-
@@ -25,7 +24,6 @@ package require teapot::entity
 package require teapot::metadata::container    ; # MD container
 package require teapot::metadata::write        ; # MD formatting for output
 package require teapot::package::gen::pkgIndex ; # Generation of a load command
-package require zipfile::encode                ; # ZIP archive creation
 
 logger::initNamespace ::teapot::package::gen::zip
 namespace eval        ::teapot::package::gen::zip {}
@@ -36,6 +34,7 @@ namespace eval        ::teapot::package::gen::zip {}
 proc ::teapot::package::gen::zip::generate {p top archive} {
     # NOTE: top ignored, all in p->__files
 
+    # TODO: Convert this to use the zlib package
     zipfile::encode z
     z file: teapot.txt 1 [set mdf [Meta $p]]
     z comment: [fileutil::cat $mdf]
@@ -76,6 +75,7 @@ proc ::teapot::package::gen::zip::generate {p top archive} {
 
 proc ::teapot::package::gen::zip::repack {p top archive} {
 
+    # TODO: Convert this to use the zlib package
     zipfile::encode z
     z file: teapot.txt 1  [set mdf [Meta $p]]
     z comment: [fileutil::cat $mdf]
