@@ -87,7 +87,27 @@ fi
 
 ## Download/build treectrl
 
+# TODO: Fix the build...
 
+treectrl_url="https://github.com/tclmonster/tktreectrl/archive/refs/tags/magicsplat-1.8.0.tar.gz"
+treectrl_dir="${build_dir}"/tktreectrl-magicsplat-1.8.0
+treectrl_sha256='e0c1a9d14b1c742c9490d7164c538b429b7fc269042840b8f75edca31337e0c5'
+
+if test ! -f "${treectrl_dir}"/configure.ac; then
+    curl -L "${treectrl_url}" | tar -xz -C build/
+fi
+
+(
+    cd "${treectrl_dir}"
+    autoreconf
+    ./configure --with-tcl="${sdk_dir}"/lib --with-tk="${sdk_dir}"/lib \
+		--with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
+		--prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
+
+    ${MAKE:-make}
+    ${MAKE:-make} install-libraries
+
+) || fail 'to build tktreectrl'
 
 ## Download/build Tktable
 
