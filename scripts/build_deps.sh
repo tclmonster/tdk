@@ -2,6 +2,8 @@
 
 fail() { printf 'error: %s\n' $1; exit 1; }
 
+export CFLAGS="$CFLAGS -fpermissive -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=implicit-function-declaration"
+
 build_dir="$(pwd)"/build
 
 ## Download pre-requisite Tcl/Tk SDK
@@ -85,9 +87,28 @@ fi
 
 ) || fail 'to build bwidget'
 
-## Download/build treectrl
+## Download/build Tktable
 
-# TODO: Fix the build...
+tktable_url="https://github.com/apnadkarni/tktable/archive/refs/tags/magicsplat-1.8.0.tar.gz"
+tktable_dir="${build_dir}"/tktable-magicsplat-1.8.0
+tktable_sha256='1408e16d66faa7a6618b7865ebfc2123e24c0a2758bd6ce7e0e88bbc324fe289'
+
+if test ! -f "${tktable_dir}"/configure.in; then
+    curl -L "${tktable_url}" | tar -xz -C build/
+fi
+
+( exit 0
+    cd "${tktable_dir}"
+    ./configure --with-tcl="${sdk_dir}"/lib --with-tk="${sdk_dir}"/lib \
+		--with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
+		--prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
+
+    ${MAKE:-make}
+    ${MAKE:-make} install-libraries
+
+) || fail 'to build tktable'
+
+## Download/build treectrl
 
 treectrl_url="https://github.com/tclmonster/tktreectrl/archive/refs/tags/magicsplat-1.8.0.tar.gz"
 treectrl_dir="${build_dir}"/tktreectrl-magicsplat-1.8.0
@@ -98,16 +119,18 @@ if test ! -f "${treectrl_dir}"/configure.ac; then
 fi
 
 (
+    # TODO: Makefile:
+    # Need to do an upgrade to entire TEA setup. There's multiple failures due to
+    # old macros and so-forth, along with invalid platform-detection logic.
+
     cd "${treectrl_dir}"
     autoreconf
     ./configure --with-tcl="${sdk_dir}"/lib --with-tk="${sdk_dir}"/lib \
 		--with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
-		--prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
+		--prefix="${sdk_dir}" --exec-prefix="${sdk_dir}" \
+		--disable-shellicon
 
     ${MAKE:-make}
-    ${MAKE:-make} install-libraries
+    ${MAKE:-make} install
 
 ) || fail 'to build tktreectrl'
-
-## Download/build Tktable
-
