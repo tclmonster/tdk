@@ -95,12 +95,12 @@ fi
 
 ## Download/build Tktable
 
-tktable_url="https://github.com/apnadkarni/tktable/archive/refs/tags/magicsplat-1.8.0.tar.gz"
+tktable_url="https://github.com/tclmonster/tktable.git"
 tktable_dir="${build_dir}"/tktable-magicsplat-1.8.0
-tktable_sha256='1408e16d66faa7a6618b7865ebfc2123e24c0a2758bd6ce7e0e88bbc324fe289'
+tktable_sha256=''
 
 if test ! -f "${tktable_dir}"/configure.in; then
-    curl -L "${tktable_url}" | tar -xz -C build/
+    git clone -b tea-update "${tktable_url}" "${tktable_dir}" || fail 'to clone tktable'
 fi
 
 (
@@ -108,7 +108,7 @@ fi
     export CFLAGS="$CFLAGS_PERMISSIVE"
     configure
     ${MAKE:-make}
-    ${MAKE:-make} install-libraries
+    ${MAKE:-make} install
 
 ) || fail 'to build tktable'
 
@@ -119,7 +119,7 @@ treectrl_dir="${build_dir}"/tktreectrl-magicsplat-1.8.0
 treectrl_sha256=''
 
 if test ! -f "${treectrl_dir}"/configure.ac; then
-    git clone -b tea-update "${treectrl_url}" "${treectrl_dir}"
+    git clone -b tea-update "${treectrl_url}" "${treectrl_dir}" || fail 'to clone treectrl'
 fi
 
 (
