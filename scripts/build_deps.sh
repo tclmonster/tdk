@@ -8,23 +8,27 @@ build_dir="$(pwd)"/build
 
 ## Download pre-requisite Tcl/Tk SDK
 
-kit_version=0.13.7
+kit_version=0.13.8
 tcl_version=8.6.16
 release_url="https://github.com/tclmonster/kitcreator/releases/download"
 sdk_url="${release_url}/${kit_version}/libtclkit-sdk-${tcl_version}-x86_64-w64-mingw32.tar.gz"
 sdk_dir="${build_dir}"/libtclkit-sdk-${tcl_version}
 
-kit_file="tclkitsh-${tcl_version}-x86_64-w64-mingw32.exe"
-kit_url="${release_url}/${kit_version}/${kit_file}"
-
 if test ! -f "${sdk_dir}"/lib/tclConfig.sh; then
     mkdir -p build 2>/dev/null
 
     curl -L "$sdk_url" | tar -xz -C build/
+
+    if test ! -d "${sdk_dir}"/bin; then
+	mkdir -p "${sdk_dir}"/bin  ;# In case the KitDLL has no bin
+    fi
 fi
 
+kit_file="${sdk_dir}"/bin/tclsh.exe
+kit_url="${release_url}/${kit_version}/tclkitsh-${tcl_version}-x86_64-w64-mingw32.exe"
+
 if test ! -f "${build_dir}"/${kit_file}; then
-    curl -L "$kit_url" -o "${build_dir}"/${kit_file}
+    curl -L "${kit_url}" -o "${kit_file}"
 fi
 
 tcl_lib_dir="${build_dir}"/
@@ -43,7 +47,7 @@ fi
 (
     cd "${img_dir}"
     ./configure --with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
-		--prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
+                --prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
 
     ${MAKE:-make}
     ${MAKE:-make} install-libraries
@@ -63,8 +67,8 @@ fi
 
 (
     cd "${tklib_dir}"
-    ./configure --with-tclsh="${build_dir}"/${kit_file} \
-		--prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
+    ./configure --with-tclsh="${kit_file}" \
+                --prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
 
     ${MAKE:-make}
     ${MAKE:-make} install
@@ -100,8 +104,8 @@ fi
 (
     cd "${tktable_dir}"
     ./configure --with-tcl="${sdk_dir}"/lib --with-tk="${sdk_dir}"/lib \
-		--with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
-		--prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
+                --with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
+                --prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
 
     ${MAKE:-make}
     ${MAKE:-make} install-libraries
@@ -122,8 +126,8 @@ fi
     cd "${treectrl_dir}"
 
     ./configure --with-tcl="${sdk_dir}"/lib --with-tk="${sdk_dir}"/lib \
-		--with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
-		--prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
+                --with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
+                --prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
 
     ${MAKE:-make}
     ${MAKE:-make} install
