@@ -2,7 +2,7 @@
 
 fail() { printf 'error: %s\n' $1; exit 1; }
 
-export CFLAGS="-g -O0 $CFLAGS -fpermissive -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=implicit-function-declaration"
+CFLAGS_PERMISSIVE="$CFLAGS -fpermissive -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=implicit-function-declaration"
 
 build_dir="$(pwd)"/build
 
@@ -36,10 +36,10 @@ tcl_lib_dir="${build_dir}"/
 ## Common setup
 
 configure() {
-    ./configure --enable-symbols --prefix="${sdk_dir}" --exec-prefix="${sdk_dir}" \
-		--with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
-		--with-tcl="${sdk_dir}"/lib --with-tk="${sdk_dir}"/lib \
-		"$@"
+    ./configure --prefix="${sdk_dir}" --exec-prefix="${sdk_dir}" \
+                --with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
+                --with-tcl="${sdk_dir}"/lib --with-tk="${sdk_dir}"/lib \
+                "$@"
 }
 
 ## Download/build Img
@@ -55,9 +55,7 @@ fi
 
 (
     cd "${img_dir}"
-
-    configure
-
+    configure --enable-symbols  ;# Without symbols libPNG is crashing?
     ${MAKE:-make}
     ${MAKE:-make} install-libraries
 
@@ -76,9 +74,7 @@ fi
 
 (
     cd "${tklib_dir}"
-
     configure --with-tclsh="${kit_file}"
-
     ${MAKE:-make}
     ${MAKE:-make} install
 
@@ -109,8 +105,8 @@ fi
 
 (
     cd "${tktable_dir}"
+    export CFLAGS="$CFLAGS_PERMISSIVE"
     configure
-
     ${MAKE:-make}
     ${MAKE:-make} install-libraries
 
@@ -128,9 +124,8 @@ fi
 
 (
     cd "${treectrl_dir}"
-
+    export CFLAGS="$CFLAGS_PERMISSIVE"
     configure
-
     ${MAKE:-make}
     ${MAKE:-make} install
 
