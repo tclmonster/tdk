@@ -28,6 +28,11 @@ if {"unwrapped" eq $::starkit::mode} {
         }
     }
 
+    # Ensure the ../lib gets added when running from within bin
+    lappend auto_path [file join \
+                           [file dirname \
+                                [file dirname \
+                                     [info nameofexecutable]]] lib]
 } else {
 
     # Wrapped applications use the default TclApp anchor so all
@@ -49,9 +54,9 @@ proc go {file} {
 
     global auto_path
     foreach d $auto_path {
-	foreach pd [glob -nocomplain -directory $d P-*] {
-	    lappend auto_path $pd
-	}
+        foreach pd [glob -nocomplain -directory $d P-*] {
+            lappend auto_path $pd
+        }
     }
 
     # ### ### ### #########
