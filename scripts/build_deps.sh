@@ -2,7 +2,7 @@
 
 fail() { printf 'error: %s\n' $1; exit 1; }
 
-export CFLAGS="$CFLAGS -fpermissive -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=implicit-function-declaration"
+export CFLAGS="-g -O0 $CFLAGS -fpermissive -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=implicit-function-declaration"
 
 build_dir="$(pwd)"/build
 
@@ -20,7 +20,7 @@ if test ! -f "${sdk_dir}"/lib/tclConfig.sh; then
     curl -L "$sdk_url" | tar -xz -C build/
 
     if test ! -d "${sdk_dir}"/bin; then
-	mkdir -p "${sdk_dir}"/bin  ;# In case the KitDLL has no bin
+        mkdir -p "${sdk_dir}"/bin  ;# In case the KitDLL has no bin
     fi
 fi
 
@@ -32,6 +32,15 @@ if test ! -f "${build_dir}"/${kit_file}; then
 fi
 
 tcl_lib_dir="${build_dir}"/
+
+## Common setup
+
+configure() {
+    ./configure --enable-symbols --prefix="${sdk_dir}" --exec-prefix="${sdk_dir}" \
+		--with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
+		--with-tcl="${sdk_dir}"/lib --with-tk="${sdk_dir}"/lib \
+		"$@"
+}
 
 ## Download/build Img
 
@@ -46,8 +55,8 @@ fi
 
 (
     cd "${img_dir}"
-    ./configure --with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
-                --prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
+
+    configure
 
     ${MAKE:-make}
     ${MAKE:-make} install-libraries
@@ -67,8 +76,8 @@ fi
 
 (
     cd "${tklib_dir}"
-    ./configure --with-tclsh="${kit_file}" \
-                --prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
+
+    configure --with-tclsh="${kit_file}"
 
     ${MAKE:-make}
     ${MAKE:-make} install
@@ -86,10 +95,7 @@ if test ! -f "${bwidget_dir}"/README.txt; then
     curl -L "${bwidget_url}" | tar -xz -C build/
 fi
 
-(
-    cp -Rf "${bwidget_dir}" "${sdk_dir}"/lib
-
-) || fail 'to build bwidget'
+( cp -Rf "${bwidget_dir}" "${sdk_dir}"/lib ) || fail 'to build bwidget'
 
 ## Download/build Tktable
 
@@ -103,9 +109,7 @@ fi
 
 (
     cd "${tktable_dir}"
-    ./configure --with-tcl="${sdk_dir}"/lib --with-tk="${sdk_dir}"/lib \
-                --with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
-                --prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
+    configure
 
     ${MAKE:-make}
     ${MAKE:-make} install-libraries
@@ -125,9 +129,7 @@ fi
 (
     cd "${treectrl_dir}"
 
-    ./configure --with-tcl="${sdk_dir}"/lib --with-tk="${sdk_dir}"/lib \
-                --with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
-                --prefix="${sdk_dir}" --exec-prefix="${sdk_dir}"
+    configure
 
     ${MAKE:-make}
     ${MAKE:-make} install
