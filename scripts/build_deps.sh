@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 
+## This file is meant to be run from the source root
+
 fail() { printf 'error: %s\n' $1; exit 1; }
 
 CFLAGS_PERMISSIVE="$CFLAGS -fpermissive -Wno-error=incompatible-function-pointer-types -Wno-error=incompatible-pointer-types -Wno-error=int-conversion -Wno-error=implicit-function-declaration"
 
-build_dir="$(pwd)"/build
+source_dir="$(pwd)"
+build_dir="${source_dir}"/build
 
-## Download pre-requisite Tcl/Tk SDK
+## Download Tcl/Tk SDK
+## ------------
 
 kit_version=0.13.9
 tcl_version=8.6.16
@@ -34,6 +38,7 @@ fi
 tcl_lib_dir="${build_dir}"/
 
 ## Common setup
+## ------------
 
 configure() {
     ./configure --prefix="${sdk_dir}" --exec-prefix="${sdk_dir}" \
@@ -42,9 +47,14 @@ configure() {
                 "$@"
 }
 
+pack() {
+    "${kit_file}" "${source_dir}"/scripts/pack_deps.tcl "${sdk_dir}"/lib/libtclkit*.${so_ext} "$@"
+}
+
 so_ext=dll
 
 ## Download/build Img
+## ------------
 
 img_version=2.0.1
 img_dir="${build_dir}"/Img-${img_version}
@@ -61,11 +71,13 @@ if test ! -f "${sdk_dir}"/lib/Img*/pngtcl*.${so_ext}; then
         configure --enable-symbols  ;# Without symbols libPNG is crashing?
         ${MAKE:-make}
         ${MAKE:-make} install-libraries
+        pack "${sdk_dir}"/lib/Img*
 
     ) || fail 'to build Img'
 fi
 
 ## Download/build tklib
+## ------------
 
 tklib_version=0.9
 tklib_dir="${build_dir}"/tklib-${tklib_version}
@@ -82,11 +94,13 @@ if test ! -f "${sdk_dir}"/lib/tklib*/pkgIndex.tcl; then
         configure --with-tclsh="${kit_file}"
         ${MAKE:-make}
         ${MAKE:-make} install
+        pack "${sdk_dir}"/lib/tklib*
 
     ) || fail 'to build tklib'
 fi
 
 ## Download/build bwidget
+## ------------
 
 bwidget_version=1.10.1
 bwidget_url="https://sourceforge.net/projects/tcllib/files/BWidget/${bwidget_version}/bwidget-${bwidget_version}.tar.gz/download"
@@ -100,11 +114,13 @@ fi
 if test ! -f "${sdk_dir}"/lib/bwidget*/notebook.tcl; then
     (
         cp -Rf "${bwidget_dir}" "${sdk_dir}"/lib
+        pack "${sdk_dir}"/lib/bwidget*
 
     ) || fail 'to build bwidget'
 fi
 
 ## Download/build Tktable
+## ------------
 
 tktable_url="https://github.com/tclmonster/tktable.git"
 tktable_dir="${build_dir}"/tktable-magicsplat-1.8.0
@@ -121,11 +137,13 @@ if test ! -f "${sdk_dir}"/lib/Tktable*/Tktable*.${so_ext}; then
         configure
         ${MAKE:-make}
         ${MAKE:-make} install
+        pack "${sdk_dir}"/lib/Tktable*
 
     ) || fail 'to build tktable'
 fi
 
 ## Download/build treectrl
+## ------------
 
 treectrl_url="https://github.com/tclmonster/tktreectrl.git"
 treectrl_dir="${build_dir}"/tktreectrl-magicsplat-1.8.0
@@ -142,11 +160,13 @@ if test ! -f "${sdk_dir}"/lib/treectrl*/treectrl*.${so_ext}; then
         configure
         ${MAKE:-make}
         ${MAKE:-make} install
+        pack "${sdk_dir}"/lib/treectrl*
 
     ) || fail 'to build tktreectrl'
 fi
 
 ## Download/build tbcload
+## ------------
 
 tbcload_url="https://github.com/tclmonster/tbcload.git"
 tbcload_dir="${build_dir}"/tbcload
@@ -162,11 +182,13 @@ if test ! -f "${sdk_dir}"/lib/tbcload*/tbcload*.${so_ext}; then
         configure
         ${MAKE:-make}
         ${MAKE:-make} install
+        pack "${sdk_dir}"/lib/tbcload*
 
     ) || fail 'to build tbcload'
 fi
 
 ## Download/build tclcompiler
+## ------------
 
 tclcompiler_url="https://github.com/tclmonster/tclcompiler.git"
 tclcompiler_dir="${build_dir}"/tclcompiler
@@ -182,11 +204,13 @@ if test ! -f "${sdk_dir}"/lib/tclcompiler*/tclcompiler*.${so_ext}; then
         configure
         ${MAKE:-make}
         ${MAKE:-make} install
+        pack "${sdk_dir}"/lib/tclcompiler*
 
     ) || fail 'to build tclcompiler'
 fi
 
 ## Download/build tclparser
+## ------------
 
 tclparser_url="https://github.com/tclmonster/tclparser.git"
 tclparser_dir="${build_dir}"/tclparser
@@ -202,6 +226,7 @@ if test ! -f "${sdk_dir}"/lib/tclparser*/tclparser*.${so_ext}; then
         configure
         ${MAKE:-make}
         ${MAKE:-make} install
+        pack "${sdk_dir}"/lib/tclparser*
 
     ) || fail 'to build tclparser'
 fi
