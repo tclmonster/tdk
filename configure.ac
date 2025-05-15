@@ -4,7 +4,7 @@
 
 AC_INIT([tcl-dev-kit], [8.0])
 
-TEA_INIT([3.7])
+TEA_INIT()
 
 # There are two ways to invoke configure:
 # 1. Supplying a full Tcl distribution (ActiveTcl, Magicsplat, BAWT).
