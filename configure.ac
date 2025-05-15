@@ -276,8 +276,6 @@ fi
 
 AC_SUBST(TDK_EXTRA_DISTRO_PKGS)
 
-AC_CONFIG_SUBDIRS([lib/tbcload lib/tclcompiler lib/tclparser])
-
 AC_CONFIG_FILES([
    Makefile
    TclCompiler.tap

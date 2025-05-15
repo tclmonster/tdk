@@ -1,9 +1,0 @@
-[submodule "lib/tclcompiler"]
-	path = lib/tclcompiler
-	url = https://github.com/bandoti/tclcompiler.git
-[submodule "lib/tclparser"]
-	path = lib/tclparser
-	url = https://github.com/bandoti/tclparser.git
-[submodule "lib/tbcload"]
-	path = lib/tbcload
-	url = https://github.com/bandoti/tbcload.git

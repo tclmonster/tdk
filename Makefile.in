@@ -78,10 +78,6 @@ TDK_STARKIT_APPS = \
 	comp.tcl \
 	check.tcl
 
-TDK_COMPILER_LIBS = tbcload tclcompiler tclparser
-
-TDK_COMPILER_PKGS = $(TDK_COMPILER_LIBS)
-
 TDK_INTERNAL_PKGS = \
 	afs \
 	tcldevkit::appframe \
@@ -154,7 +150,7 @@ DECL_WRAP_CMD = wrap_app() { \
 		APP_FILES_WITH_GLOB="$$APP_FILES_WITH_GLOB $${file}/*"; \
 	done; \
 	local PACKAGES= ; \
-	for pkg in $${DISTRO_PKGS} $(TDK_COMPILER_PKGS) $(TDK_INTERNAL_PKGS); do \
+	for pkg in $${DISTRO_PKGS} $(TDK_INTERNAL_PKGS); do \
 		PACKAGES="$$PACKAGES -pkg $$pkg"; \
 	done; \
 	TCLAPP_PKGPATH="$(srcdir)" \
@@ -169,16 +165,13 @@ DECL_WRAP_CMD = wrap_app() { \
 
 all: default_apps
 
-$(TDK_COMPILER_LIBS):
-	cd lib/$@ && $(MAKE) all
-
 default_apps: $(TDK_DEFAULT_APPS)
 
 starpacks: $(TDK_STARPACK_APPS)
 
 starkits: $(TDK_STARKIT_APPS)
 
-$(TDK_STARKIT_APPS) $(TDK_STARPACK_APPS): $(TDK_COMPILER_LIBS)
+$(TDK_STARKIT_APPS) $(TDK_STARPACK_APPS): 
 	$(DECL_WRAP_CMD); wrap_app $@
 
 clean:

@@ -8,7 +8,7 @@ build_dir="$(pwd)"/build
 
 ## Download pre-requisite Tcl/Tk SDK
 
-kit_version=0.13.8
+kit_version=0.13.9
 tcl_version=8.6.16
 release_url="https://github.com/tclmonster/kitcreator/releases/download"
 sdk_url="${release_url}/${kit_version}/libtclkit-sdk-${tcl_version}-x86_64-w64-mingw32.tar.gz"
@@ -130,3 +130,60 @@ fi
     ${MAKE:-make} install
 
 ) || fail 'to build tktreectrl'
+
+## Download/build tbcload
+
+tbcload_url="https://github.com/tclmonster/tbcload.git"
+tbcload_dir="${build_dir}"/tbcload
+tbcload_sha256=''
+
+if test ! -f "${tbcload_dir}"/configure.ac; then
+    git clone "${tbcload_url}" "${tbcload_dir}" || fail 'to clone tbcload'
+fi
+
+(
+    cd "${tbcload_dir}"
+    export CFLAGS="$CFLAGS_PERMISSIVE"
+    configure
+    ${MAKE:-make}
+    ${MAKE:-make} install
+
+) || fail 'to build tbcload'
+
+## Download/build tclcompiler
+
+tclcompiler_url="https://github.com/tclmonster/tclcompiler.git"
+tclcompiler_dir="${build_dir}"/tclcompiler
+tclcompiler_sha256=''
+
+if test ! -f "${tclcompiler_dir}"/configure.ac; then
+    git clone "${tclcompiler_url}" "${tclcompiler_dir}" || fail 'to clone tclcompiler'
+fi
+
+(
+    cd "${tclcompiler_dir}"
+    export CFLAGS="$CFLAGS_PERMISSIVE"
+    configure
+    ${MAKE:-make}
+    ${MAKE:-make} install
+
+) || fail 'to build tclcompiler'
+
+## Download/build tclparser
+
+tclparser_url="https://github.com/tclmonster/tclparser.git"
+tclparser_dir="${build_dir}"/tclparser
+tclparser_sha256=''
+
+if test ! -f "${tclparser_dir}"/configure.ac; then
+    git clone "${tclparser_url}" "${tclparser_dir}" || fail 'to clone tclparser'
+fi
+
+(
+    cd "${tclparser_dir}"
+    export CFLAGS="$CFLAGS_PERMISSIVE"
+    configure
+    ${MAKE:-make}
+    ${MAKE:-make} install
+
+) || fail 'to build tclparser'
