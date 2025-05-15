@@ -51,6 +51,7 @@ pack() {
     "${kit_file}" "${source_dir}"/scripts/pack_deps.tcl "${sdk_dir}"/lib/libtclkit*.${so_ext} "$@"
 }
 
+exe_ext=.exe
 so_ext=dll
 
 ## Download/build Img
@@ -230,3 +231,9 @@ if test ! -f "${sdk_dir}"/lib/tclparser*/tclparser*.${so_ext}; then
 
     ) || fail 'to build tclparser'
 fi
+
+## Copy wish & libtclkit so it may be used in TDK build
+## ------------
+
+cp -f "${sdk_dir}"/bin/wish${exe_ext} "${source_dir}"/
+cp -f "${sdk_dir}"/lib/libtclkit*.${so_ext} "${source_dir}"/

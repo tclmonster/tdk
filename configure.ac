@@ -79,9 +79,9 @@ else
 	AC_MSG_RESULT([none found])
 fi
 
-AC_MSG_CHECKING([packages provided by "$TDK_TCLSH_PROG"])
+AC_MSG_CHECKING([packages provided by "$TDK_WISH_PROG"])
 AC_CACHE_VAL(tdk_cv_distro_pkgs, [
-	tdk_cv_distro_pkgs="$(echo "$tdk_cv_required_pkgs" | $TDK_TCLSH_PROG $srcdir/scripts/package_location.tcl)"
+	tdk_cv_distro_pkgs="$(echo "$tdk_cv_required_pkgs" | $TDK_WISH_PROG $srcdir/scripts/package_location.tcl)"
 ])
 if test -n "$tdk_cv_distro_pkgs"; then
 	AC_MSG_RESULT([

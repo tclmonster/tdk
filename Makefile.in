@@ -138,7 +138,7 @@ DECL_WRAP_CMD = wrap_app() { \
 			exit 1; \
 		fi; \
 	else \
-		WRAP_PREFIX_ARG="-interpreter "$(TDK_TCLSH_PROG)""; \
+		WRAP_PREFIX_ARG="-interpreter "./wish$(EXEEXT)""; \
 	fi; \
 	local TOP_LEVEL_FILES="$(srcdir)/LICENSE"; \
 	for file in "$(srcdir)/artwork" "$(srcdir)/data/images"; do \
@@ -171,13 +171,16 @@ starpacks: $(TDK_STARPACK_APPS)
 
 starkits: $(TDK_STARKIT_APPS)
 
-$(TDK_STARKIT_APPS) $(TDK_STARPACK_APPS): 
+$(TDK_STARKIT_APPS) $(TDK_STARPACK_APPS):
 	$(DECL_WRAP_CMD); wrap_app $@
 
 clean:
-	cd lib/tbcload     && $(MAKE) $@
-	cd lib/tclcompiler && $(MAKE) $@
-	cd lib/tclparser   && $(MAKE) $@
+	@for app in $(TDK_STARKIT_APPS) $(TDK_STARPACK_APPS); do \
+		if [ -f "$(top_builddir)/$$app" ]; then \
+			echo "Removing $(top_builddir)/$$app"; \
+			rm -f "$(top_builddir)/$$app"; \
+		fi; \
+	done
 
 Makefile: $(srcdir)/Makefile.in config.status
 	./config.status $@
