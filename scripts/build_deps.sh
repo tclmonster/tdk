@@ -27,7 +27,7 @@ fi
 kit_file="${sdk_dir}"/bin/tclsh.exe
 kit_url="${release_url}/${kit_version}/tclkitsh-${tcl_version}-x86_64-w64-mingw32.exe"
 
-if test ! -f "${build_dir}"/${kit_file}; then
+if test ! -f "${kit_file}"; then
     curl -L "${kit_url}" -o "${kit_file}"
 fi
 
@@ -42,6 +42,8 @@ configure() {
                 "$@"
 }
 
+so_ext=dll
+
 ## Download/build Img
 
 img_version=2.0.1
@@ -53,13 +55,15 @@ if test ! -f "${img_dir}"/configure.ac; then
     curl -L "${img_url}" | tar -xz -C build/
 fi
 
-(
-    cd "${img_dir}"
-    configure --enable-symbols  ;# Without symbols libPNG is crashing?
-    ${MAKE:-make}
-    ${MAKE:-make} install-libraries
+if test ! -f "${sdk_dir}"/lib/Img*/pngtcl*.${so_ext}; then
+    (
+        cd "${img_dir}"
+        configure --enable-symbols  ;# Without symbols libPNG is crashing?
+        ${MAKE:-make}
+        ${MAKE:-make} install-libraries
 
-) || fail 'to build Img'
+    ) || fail 'to build Img'
+fi
 
 ## Download/build tklib
 
@@ -72,13 +76,15 @@ if test ! -f "${tklib_dir}"/configure.in; then
     curl -L "${tklib_url}" | tar -xj -C build/
 fi
 
-(
-    cd "${tklib_dir}"
-    configure --with-tclsh="${kit_file}"
-    ${MAKE:-make}
-    ${MAKE:-make} install
+if test ! -f "${sdk_dir}"/lib/tklib*/pkgIndex.tcl; then
+    (
+        cd "${tklib_dir}"
+        configure --with-tclsh="${kit_file}"
+        ${MAKE:-make}
+        ${MAKE:-make} install
 
-) || fail 'to build tklib'
+    ) || fail 'to build tklib'
+fi
 
 ## Download/build bwidget
 
@@ -91,7 +97,12 @@ if test ! -f "${bwidget_dir}"/README.txt; then
     curl -L "${bwidget_url}" | tar -xz -C build/
 fi
 
-( cp -Rf "${bwidget_dir}" "${sdk_dir}"/lib ) || fail 'to build bwidget'
+if test ! -f "${sdk_dir}"/lib/bwidget*/notebook.tcl; then
+    (
+        cp -Rf "${bwidget_dir}" "${sdk_dir}"/lib
+
+    ) || fail 'to build bwidget'
+fi
 
 ## Download/build Tktable
 
@@ -99,18 +110,20 @@ tktable_url="https://github.com/tclmonster/tktable.git"
 tktable_dir="${build_dir}"/tktable-magicsplat-1.8.0
 tktable_sha256=''
 
-if test ! -f "${tktable_dir}"/configure.in; then
+if test ! -f "${tktable_dir}"/configure.ac; then
     git clone -b tea-update "${tktable_url}" "${tktable_dir}" || fail 'to clone tktable'
 fi
 
-(
-    cd "${tktable_dir}"
-    export CFLAGS="$CFLAGS_PERMISSIVE"
-    configure
-    ${MAKE:-make}
-    ${MAKE:-make} install
+if test ! -f "${sdk_dir}"/lib/Tktable*/Tktable*.${so_ext}; then
+    (
+        cd "${tktable_dir}"
+        export CFLAGS="$CFLAGS_PERMISSIVE"
+        configure
+        ${MAKE:-make}
+        ${MAKE:-make} install
 
-) || fail 'to build tktable'
+    ) || fail 'to build tktable'
+fi
 
 ## Download/build treectrl
 
@@ -122,14 +135,16 @@ if test ! -f "${treectrl_dir}"/configure.ac; then
     git clone -b tea-update "${treectrl_url}" "${treectrl_dir}" || fail 'to clone treectrl'
 fi
 
-(
-    cd "${treectrl_dir}"
-    export CFLAGS="$CFLAGS_PERMISSIVE"
-    configure
-    ${MAKE:-make}
-    ${MAKE:-make} install
+if test ! -f "${sdk_dir}"/lib/treectrl*/treectrl*.${so_ext}; then
+    (
+        cd "${treectrl_dir}"
+        export CFLAGS="$CFLAGS_PERMISSIVE"
+        configure
+        ${MAKE:-make}
+        ${MAKE:-make} install
 
-) || fail 'to build tktreectrl'
+    ) || fail 'to build tktreectrl'
+fi
 
 ## Download/build tbcload
 
@@ -141,14 +156,15 @@ if test ! -f "${tbcload_dir}"/configure.ac; then
     git clone "${tbcload_url}" "${tbcload_dir}" || fail 'to clone tbcload'
 fi
 
-(
-    cd "${tbcload_dir}"
-    export CFLAGS="$CFLAGS_PERMISSIVE"
-    configure
-    ${MAKE:-make}
-    ${MAKE:-make} install
+if test ! -f "${sdk_dir}"/lib/tbcload*/tbcload*.${so_ext}; then
+    (
+        cd "${tbcload_dir}"
+        configure
+        ${MAKE:-make}
+        ${MAKE:-make} install
 
-) || fail 'to build tbcload'
+    ) || fail 'to build tbcload'
+fi
 
 ## Download/build tclcompiler
 
@@ -160,14 +176,15 @@ if test ! -f "${tclcompiler_dir}"/configure.ac; then
     git clone "${tclcompiler_url}" "${tclcompiler_dir}" || fail 'to clone tclcompiler'
 fi
 
-(
-    cd "${tclcompiler_dir}"
-    export CFLAGS="$CFLAGS_PERMISSIVE"
-    configure
-    ${MAKE:-make}
-    ${MAKE:-make} install
+if test ! -f "${sdk_dir}"/lib/tclcompiler*/tclcompiler*.${so_ext}; then
+    (
+        cd "${tclcompiler_dir}"
+        configure
+        ${MAKE:-make}
+        ${MAKE:-make} install
 
-) || fail 'to build tclcompiler'
+    ) || fail 'to build tclcompiler'
+fi
 
 ## Download/build tclparser
 
@@ -179,11 +196,12 @@ if test ! -f "${tclparser_dir}"/configure.ac; then
     git clone "${tclparser_url}" "${tclparser_dir}" || fail 'to clone tclparser'
 fi
 
-(
-    cd "${tclparser_dir}"
-    export CFLAGS="$CFLAGS_PERMISSIVE"
-    configure
-    ${MAKE:-make}
-    ${MAKE:-make} install
+if test ! -f "${sdk_dir}"/lib/tclparser*/tclparser*.${so_ext}; then
+    (
+        cd "${tclparser_dir}"
+        configure
+        ${MAKE:-make}
+        ${MAKE:-make} install
 
-) || fail 'to build tclparser'
+    ) || fail 'to build tclparser'
+fi
