@@ -177,6 +177,22 @@ starkits: $(TDK_STARKIT_APPS)
 $(TDK_STARKIT_APPS) $(TDK_STARPACK_APPS):
 	$(DECL_WRAP_CMD); wrap_app $@
 
+install:
+	@for app in $(TDK_STARKIT_APPS) $(TDK_STARPACK_APPS); do \
+		if [ -f "$(top_builddir)/$$app" ]; then \
+			echo "Installing \"$(top_builddir)/$$app\""; \
+			$(INSTALL_PROGRAM) "$(top_builddir)/$$app" "$(exec_prefix)/$$app" ; \
+		fi; \
+	done; \
+	echo "Installing \"$(srcdir)/wish$(EXEEXT)\""; \
+	$(INSTALL_PROGRAM) "$(srcdir)"/wish$(EXEEXT) "$(exec_prefix)"; \
+	for kitdll in "$(srcdir)"/libtclkit*.{dll,so,dylib}; do \
+		 if test -f "$${kitdll}"; then \
+			echo "Installing \"$${kitdll}\""; \
+			$(INSTALL_LIBRARY) "$${kitdll}" "$(exec_prefix)"; \
+		fi; \
+	done
+
 clean:
 	@for app in $(TDK_STARKIT_APPS) $(TDK_STARPACK_APPS); do \
 		if [ -f "$(top_builddir)/$$app" ]; then \
