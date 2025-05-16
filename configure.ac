@@ -51,7 +51,7 @@ AC_ARG_WITH(tclkit,
 if test "$with_tclkit" = "no"; then
 	AC_MSG_RESULT([none])
 	TDK_TCLKIT=""
-	TDK_KIT_EXT=".tcl"
+	TDK_KIT_EXT=".tdkapp"
 else
 	AC_MSG_RESULT([found "${with_tclkit}"])
 	TDK_TCLKIT="$($CYGPATH "$with_tclkit")"

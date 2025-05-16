@@ -68,15 +68,15 @@ TDK_STARPACK_APPS = \
 	check$(EXEEXT)
 
 TDK_STARKIT_APPS = \
-	xref.tcl \
-	vfse.tcl \
-	tclapp.tcl \
-	tape.tcl \
-	lsmfs.tcl \
-	inspector.tcl \
-	debug.tcl \
-	comp.tcl \
-	check.tcl
+	xref.tdkapp \
+	vfse.tdkapp \
+	tclapp.tdkapp \
+	tape.tdkapp \
+	lsmfs.tdkapp \
+	inspector.tdkapp \
+	debug.tdkapp \
+	comp.tdkapp \
+	check.tdkapp
 
 TDK_INTERNAL_PKGS = \
 	afs \
@@ -129,7 +129,7 @@ DECL_WRAP_CMD = wrap_app() { \
 	local WRAP_PREFIX_ARG= ; \
 	local WRAP_PREFIX_VAL= ; \
 	local DISTRO_PKGS= ; \
-	if test "$$APP_EXT" != "tcl"; then \
+	if test "$$APP_EXT" != "tdkapp"; then \
 		if test -n "$(TDK_TCLKIT)"; then \
 			WRAP_PREFIX_ARG="-prefix"; \
 			WRAP_PREFIX_VAL="$(TDK_TCLKIT)"; \
@@ -163,7 +163,7 @@ DECL_WRAP_CMD = wrap_app() { \
 			$${PACKAGES} \
 			-anchor "" -relativeto "$(srcdir)" $${TOP_LEVEL_FILES} \
 			$${WRAP_PREFIX_ARG} "$${WRAP_PREFIX_VAL}" \
-			-out "$$OUTPUT"; \
+			-out "$(top_builddir)/$${OUTPUT}"; \
 }
 
 all: default_apps
