@@ -8577,7 +8577,7 @@ if test "$with_tclkit" = "no"; then
 	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: none" >&5
 printf "%s\n" "none" >&6; }
 	TDK_TCLKIT=""
-	TDK_KIT_EXT=".tcl"
+	TDK_KIT_EXT=".tdkapp"
 else
 	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: found \"${with_tclkit}\"" >&5
 printf "%s\n" "found \"${with_tclkit}\"" >&6; }
