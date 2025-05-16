@@ -18,3 +18,10 @@ tape*
 tclapp*
 vfse*
 xref*
+
+*.dll
+*.so
+*.dylib
+
+wish
+wish.exe
