@@ -278,7 +278,6 @@ AC_SUBST(TDK_EXTRA_DISTRO_PKGS)
 
 AC_CONFIG_FILES([
    Makefile
-   TclCompiler.tap
    TdkPackages.tap
 ])
 
