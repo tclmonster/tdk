@@ -232,6 +232,28 @@ if test ! -f "${sdk_dir}"/lib/tclparser*/tclparser*.${so_ext}; then
     ) || fail 'to build tclparser'
 fi
 
+## Download/build Tclx
+## ------------
+
+tclx_url="https://github.com/tclmonster/tclx.git"
+tclx_dir="${build_dir}"/tclx
+tclx_sha256=''
+
+if test ! -f "${tclx_dir}"/configure.ac; then
+    git clone "${tclx_url}" "${tclx_dir}" || fail 'to clone tclx'
+fi
+
+if test ! -f "${sdk_dir}"/lib/tclx*/tclx*.${so_ext}; then
+    (
+        cd "${tclx_dir}"
+        configure
+        ${MAKE:-make}
+        ${MAKE:-make} install
+        pack "${sdk_dir}"/lib/tclx*
+
+    ) || fail 'to build tclx'
+fi
+
 ## Copy wish & libtclkit so it may be used in TDK build
 ## ------------
 
