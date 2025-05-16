@@ -9,6 +9,9 @@ CFLAGS_PERMISSIVE="$CFLAGS -fpermissive -Wno-error=incompatible-function-pointer
 source_dir="$(pwd)"
 build_dir="${source_dir}"/build
 
+exe_ext=.exe
+so_ext=.dll
+
 ## Download Tcl/Tk SDK
 ## ------------
 
@@ -35,6 +38,13 @@ if test ! -f "${kit_file}"; then
     curl -L "${kit_url}" -o "${kit_file}"
 fi
 
+# In case the KitDLL is stored in the lib directory it should
+# be moved to the bin directory (alongside wish).
+
+if test ! -f "${sdk_dir}"/bin/libtclkit*${so_ext}; then
+    mv "${sdk_dir}"/lib/libtclkit*${so_ext} "${sdk_dir}"/bin/
+fi
+
 tcl_lib_dir="${build_dir}"/
 
 ## Common setup
@@ -48,11 +58,8 @@ configure() {
 }
 
 pack() {
-    "${kit_file}" "${source_dir}"/scripts/pack_deps.tcl "${sdk_dir}"/lib/libtclkit*.${so_ext} "$@"
+    "${kit_file}" "${source_dir}"/scripts/pack_deps.tcl "${sdk_dir}"/bin/libtclkit*${so_ext} "$@"
 }
-
-exe_ext=.exe
-so_ext=dll
 
 ## Download/build Img
 ## ------------
@@ -66,7 +73,7 @@ if test ! -f "${img_dir}"/configure.ac; then
     curl -L "${img_url}" | tar -xz -C build/
 fi
 
-if test ! -f "${sdk_dir}"/lib/Img*/pngtcl*.${so_ext}; then
+if test ! -f "${sdk_dir}"/lib/Img*/pngtcl*${so_ext}; then
     (
         cd "${img_dir}"
         configure --enable-symbols  ;# Without symbols libPNG is crashing?
@@ -131,7 +138,7 @@ if test ! -f "${tktable_dir}"/configure.ac; then
     git clone -b tea-update "${tktable_url}" "${tktable_dir}" || fail 'to clone tktable'
 fi
 
-if test ! -f "${sdk_dir}"/lib/Tktable*/Tktable*.${so_ext}; then
+if test ! -f "${sdk_dir}"/lib/Tktable*/Tktable*${so_ext}; then
     (
         cd "${tktable_dir}"
         export CFLAGS="$CFLAGS_PERMISSIVE"
@@ -154,7 +161,7 @@ if test ! -f "${treectrl_dir}"/configure.ac; then
     git clone -b tea-update "${treectrl_url}" "${treectrl_dir}" || fail 'to clone treectrl'
 fi
 
-if test ! -f "${sdk_dir}"/lib/treectrl*/treectrl*.${so_ext}; then
+if test ! -f "${sdk_dir}"/lib/treectrl*/treectrl*${so_ext}; then
     (
         cd "${treectrl_dir}"
         export CFLAGS="$CFLAGS_PERMISSIVE"
@@ -177,7 +184,7 @@ if test ! -f "${tbcload_dir}"/configure.ac; then
     git clone "${tbcload_url}" "${tbcload_dir}" || fail 'to clone tbcload'
 fi
 
-if test ! -f "${sdk_dir}"/lib/tbcload*/tbcload*.${so_ext}; then
+if test ! -f "${sdk_dir}"/lib/tbcload*/tbcload*${so_ext}; then
     (
         cd "${tbcload_dir}"
         configure
@@ -199,7 +206,7 @@ if test ! -f "${tclcompiler_dir}"/configure.ac; then
     git clone "${tclcompiler_url}" "${tclcompiler_dir}" || fail 'to clone tclcompiler'
 fi
 
-if test ! -f "${sdk_dir}"/lib/tclcompiler*/tclcompiler*.${so_ext}; then
+if test ! -f "${sdk_dir}"/lib/tclcompiler*/tclcompiler*${so_ext}; then
     (
         cd "${tclcompiler_dir}"
         configure
@@ -221,7 +228,7 @@ if test ! -f "${tclparser_dir}"/configure.ac; then
     git clone "${tclparser_url}" "${tclparser_dir}" || fail 'to clone tclparser'
 fi
 
-if test ! -f "${sdk_dir}"/lib/tclparser*/tclparser*.${so_ext}; then
+if test ! -f "${sdk_dir}"/lib/tclparser*/tclparser*${so_ext}; then
     (
         cd "${tclparser_dir}"
         configure
@@ -239,11 +246,11 @@ tclx_url="https://github.com/tclmonster/tclx.git"
 tclx_dir="${build_dir}"/tclx
 tclx_sha256=''
 
-if test ! -f "${tclx_dir}"/configure.ac; then
+if test ! -f "${tclx_dir}"/configure.in; then
     git clone "${tclx_url}" "${tclx_dir}" || fail 'to clone tclx'
 fi
 
-if test ! -f "${sdk_dir}"/lib/tclx*/tclx*.${so_ext}; then
+if test ! -f "${sdk_dir}"/lib/tclx*/tclx*${so_ext}; then
     (
         cd "${tclx_dir}"
         configure
@@ -258,4 +265,4 @@ fi
 ## ------------
 
 cp -f "${sdk_dir}"/bin/wish${exe_ext} "${source_dir}"/
-cp -f "${sdk_dir}"/lib/libtclkit*.${so_ext} "${source_dir}"/
+cp -f "${sdk_dir}"/bin/libtclkit*${so_ext} "${source_dir}"/
