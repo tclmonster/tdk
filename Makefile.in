@@ -127,10 +127,12 @@ DECL_WRAP_CMD = wrap_app() { \
 	local APP_NAME=$$(echo "$$OUTPUT" | cut    -f1 -d '.'); \
 	local APP_EXT=$$(echo "$$OUTPUT"  | cut -s -f2 -d '.'); \
 	local WRAP_PREFIX_ARG= ; \
+	local WRAP_PREFIX_VAL= ; \
 	local DISTRO_PKGS= ; \
 	if test "$$APP_EXT" != "tcl"; then \
 		if test -n "$(TDK_TCLKIT)"; then \
-			WRAP_PREFIX_ARG="-prefix "$(TDK_TCLKIT)""; \
+			WRAP_PREFIX_ARG="-prefix"; \
+			WRAP_PREFIX_VAL="$(TDK_TCLKIT)"; \
 			DISTRO_PKGS="$(TDK_EXTRA_DISTRO_PKGS)"; \
 		else \
 			echo "Error: cannot build requested Starpack: \"$$OUTPUT\".\
@@ -138,7 +140,8 @@ DECL_WRAP_CMD = wrap_app() { \
 			exit 1; \
 		fi; \
 	else \
-		WRAP_PREFIX_ARG="-interpreter "./wish$(EXEEXT)""; \
+		WRAP_PREFIX_VAL='"$$(dirname "$$0")/wish$(EXEEXT)"'; \
+		WRAP_PREFIX_ARG="-interpreter"; \
 	fi; \
 	local TOP_LEVEL_FILES="$(srcdir)/LICENSE"; \
 	for file in "$(srcdir)/artwork" "$(srcdir)/data/images"; do \
@@ -159,7 +162,7 @@ DECL_WRAP_CMD = wrap_app() { \
 			-relativeto "$(srcdir)/app/$$APP_NAME" $${APP_FILES_WITH_GLOB} \
 			$${PACKAGES} \
 			-anchor "" -relativeto "$(srcdir)" $${TOP_LEVEL_FILES} \
-			$${WRAP_PREFIX_ARG} \
+			$${WRAP_PREFIX_ARG} "$${WRAP_PREFIX_VAL}" \
 			-out "$$OUTPUT"; \
 }
 
