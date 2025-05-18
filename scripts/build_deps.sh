@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Copyright (c) 2024, Bandoti Ltd.
+# SPDX-License-Identifier: BSD-3-Clause
+# See LICENSE file for details.
+
 ## This file is meant to be run from the source root
 
 fail() { printf 'error: %s\n' $1; exit 1; }

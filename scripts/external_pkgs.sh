@@ -1,14 +1,15 @@
 #!/bin/sh
-#
-# Copyright (c) 2024 Mason McParlane
-# Released under the BSD-3 license. See LICENSE file for details.
-#
+
+# Copyright (c) 2024, Bandoti Ltd.
+# SPDX-License-Identifier: BSD-3-Clause
+# See LICENSE file for details.
+
 # This script is intended to be used by configure in order to
 # determine which required packages are *not* included within
 # the TDK source root. This is used in conjunction with
 # `package_location.tcl` to locate these external packages
 # within a Tcl distribution.
-#
+
 # It may make sense to rewrite this functionlity in Tcl and include
 # it as a TclApp feature, since other applications may also want to
 # automatically discover & package external dependencies.

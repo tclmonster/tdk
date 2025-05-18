@@ -1,5 +1,9 @@
 #!/usr/bin/env tclsh
 
+# Copyright (c) 2024, Bandoti Ltd.
+# SPDX-License-Identifier: BSD-3-Clause
+# See LICENSE file for details.
+
 if {$argc != 2} {
     puts "Usage: tclsh pack_deps.tcl <binary_file> <source_directory>"
     exit 1
