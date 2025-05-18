@@ -23,7 +23,7 @@ namespace eval ::splash {
     variable about      {}
     variable options
     array set options {
-	-url "http://www.activestate.com/tcl"
+	-url "https://github.com/tclmonster/tdk"
 	-title {}
 	-message {}
 	-imagefile {}

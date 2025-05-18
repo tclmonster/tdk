@@ -29,9 +29,9 @@ namespace eval projectInfo {
     set tpatver @tp_atversion@
     set buildno @at_buildno@
 
-    variable companyName   "ActiveState Software Inc."
-    variable corporateName "ActiveState Software Inc."
-    variable companyUrl    "http://www.activestate.com"
+    variable companyName   "Bandoti Ltd."
+    variable corporateName "Bandoti Ltd."
+    variable companyUrl    "https://github.com/tclmonster/tdk"
     variable productName   "Tcl Dev Kit"
     variable usersGuide    "$productName User's Guide"
 
@@ -236,7 +236,7 @@ namespace eval projectInfo {
     if {[file exists $tmp]} {
 	set helpFile(thisProduct) $tmp
     } else {
-	set helpFile(thisProduct) http://docs.activestate.com
+	set helpFile(thisProduct) https://github.com/tclmonster/tdk
     }
 
 

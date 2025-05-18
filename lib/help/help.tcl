@@ -251,7 +251,7 @@ proc help::LocateFile {fname} {
 		\n[join $dirs \n]\nAccess online documentation?"]
     if {$res eq "ok"} {
 	# Return a default pointer to online docs
-	openUrl "http://aspn.activestate.com/ASPN/docs/TclDevKit"
+	openUrl "https://github.com/tclmonster/tdk"
     }
     return ""
 }
