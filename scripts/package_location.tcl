@@ -1,6 +1,6 @@
 #!/usr/bin/env tclsh
 
-# Copyright (c) 2024, Bandoti Ltd.
+# Copyright (c) 2024, Bandoti Ltd. and contributors
 # SPDX-License-Identifier: BSD-3-Clause
 # See LICENSE file for details.
 
