@@ -1,0 +1,74 @@
+# Copyright (c) 2024, Bandoti Ltd. and contributors
+# SPDX-License-Identifier: BSD-3-Clause
+# See LICENSE file for details.
+
+name: Build and Release
+
+on:
+  push:
+    branches: [main]
+    tags:     ['v*']
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup MSys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: CLANG64
+          update: true
+          install: >-
+            base-devel
+            mingw-w64-clang-x86_64-toolchain
+            mingw-w64-clang-x86_64-autotools
+            mingw-w64-clang-x86_64-dlfcn
+            zip
+            git
+            patch
+      - name: Build dependencies
+        run: |
+          chmod +x ./scripts/build_deps.sh
+          ./scripts/build_deps.sh
+      - name: Configure
+        run: |
+          ./configure --with-tcl="$(pwd)"/build/libtclkit-sdk-*/lib \
+                      --prefix="$(pwd)"/tdk-windows-${{ github.ref_name }} \
+                      --exec-prefix="$(pwd)"/tdk-windows-${{ github.ref_name }}
+      - name: Build
+        run: |
+          make
+          make install
+      - name: Create ZIP archive
+        run: |
+          zip -r tdk-windows-${{ github.ref_name }}.zip tdk-windows-${{ github.ref_name }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tdk-windows-${{ github.ref_name }}
+          path: tdk-windows-${{ github.ref_name }}.zip
+          retention-days: 5
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tdk-windows-${{ github.ref_name }}
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name:       Release ${{ github.ref_name }}
+          draft:      false
+          prerelease: false
+          files:      tdk-windows-${{ github.ref_name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
