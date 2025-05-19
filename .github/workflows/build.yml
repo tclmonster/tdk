@@ -9,6 +9,18 @@ on:
   push:
     branches: [master]
     tags:     ['v*']
+    paths: [
+      ".github/workflows/build.yml",
+      "configure.ac",
+      "configure",
+      "Makefile.in",
+      "TdkPackages.tap.in",
+      "**/*.m4",
+      "**/*.tcl",
+      "**/*.tm",
+      "**/*.h",
+      "**/*.c"
+    ]
 
 jobs:
   build:

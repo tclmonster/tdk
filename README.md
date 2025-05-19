@@ -1,6 +1,5 @@
 
-![](artwork/splash.png)
-# Tcl Dev Kit (TDK)
+![Image of a fictional, steam-powered computer next to the words "Tcl Dev Kit"](artwork/splash.png)
 
 # Overview
 
