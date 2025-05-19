@@ -50,15 +50,11 @@ jobs:
           make
           make install
 
-      - name: Create ZIP archive
-        run: |
-          zip -r tdk-windows-${{ github.ref_name }}.zip tdk-windows-${{ github.ref_name }}
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: tdk-windows-${{ github.ref_name }}
-          path: tdk-windows-${{ github.ref_name }}.zip
+          path: tdk-windows-${{ github.ref_name }}
           retention-days: 5
 
   release:
