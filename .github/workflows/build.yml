@@ -32,6 +32,8 @@ jobs:
             zip
             git
             patch
+            groff
+
       - name: Build dependencies
         run: |
           chmod +x ./scripts/build_deps.sh
