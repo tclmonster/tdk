@@ -1,5 +1,6 @@
-# TDK
-Tcl Dev Kit (TDK)
+
+![](artwork/splash.png)
+# Tcl Dev Kit (TDK)
 
 # Overview
 
