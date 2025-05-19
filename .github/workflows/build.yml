@@ -15,6 +15,7 @@ on:
       "configure",
       "Makefile.in",
       "TdkPackages.tap.in",
+      "**/*.sh",
       "**/*.m4",
       "**/*.tcl",
       "**/*.tm",

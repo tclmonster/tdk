@@ -19,7 +19,7 @@ so_ext=.dll
 ## Download Tcl/Tk SDK
 ## ------------
 
-kit_version=0.13.9
+kit_version=0.13.10
 tcl_version=8.6.16
 release_url="https://github.com/tclmonster/kitcreator/releases/download"
 sdk_url="${release_url}/${kit_version}/libtclkit-sdk-${tcl_version}-x86_64-w64-mingw32.tar.gz"
