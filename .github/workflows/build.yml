@@ -7,7 +7,7 @@ name: Build and Release
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [master]
     tags:     ['v*']
 
 jobs:
@@ -19,6 +19,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Setup MSys2
         uses: msys2/setup-msys2@v2
         with:
@@ -38,18 +39,21 @@ jobs:
         run: |
           chmod +x ./scripts/build_deps.sh
           ./scripts/build_deps.sh
+
       - name: Configure
         run: |
-          ./configure --with-tcl="$(pwd)"/build/libtclkit-sdk-*/lib \
+          ./configure --with-tcl="$(pwd)"/build/libtclkit-sdk-8.6.16/lib \
                       --prefix="$(pwd)"/tdk-windows-${{ github.ref_name }} \
                       --exec-prefix="$(pwd)"/tdk-windows-${{ github.ref_name }}
       - name: Build
         run: |
           make
           make install
+
       - name: Create ZIP archive
         run: |
           zip -r tdk-windows-${{ github.ref_name }}.zip tdk-windows-${{ github.ref_name }}
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -66,6 +70,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: tdk-windows-${{ github.ref_name }}
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
