@@ -11,4 +11,3 @@ ports:
   - name: libtool
   - name: openssl
   - name: curl
-  - name: groff
