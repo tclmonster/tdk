@@ -118,9 +118,11 @@ jobs:
           retention-days: 5
 
   release:
-    needs: [build-windows, build-macos]
-    runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs: [build-windows, build-macos]
     steps:
       - name: Download Windows artifact
         uses: actions/download-artifact@v4
@@ -133,7 +135,7 @@ jobs:
           name: tdk-macos-${{ github.ref_name }}
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name:       Release ${{ github.ref_name }}
           draft:      false
