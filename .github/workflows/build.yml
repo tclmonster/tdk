@@ -1,7 +1,9 @@
 # Copyright (c) 2024, Bandoti Ltd. and contributors
 # SPDX-License-Identifier: BSD-3-Clause
 # See LICENSE file for details.
+
 name: Build and Release
+
 on:
   workflow_dispatch:
   push:
@@ -20,6 +22,7 @@ on:
       "**/*.h",
       "**/*.c"
     ]
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -29,6 +32,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Setup MSys2
         uses: msys2/setup-msys2@v2
         with:
@@ -43,23 +47,31 @@ jobs:
             git
             patch
             groff
+
       - name: Build dependencies
         run: |
           ./scripts/build_deps.sh
+
       - name: Configure
         run: |
           ./configure --with-tcl="$(pwd)"/build/libtclkit-sdk-8.6.16/lib \
                       --prefix="$(pwd)"/tdk-windows-${{ github.ref_name }} \
                       --exec-prefix="$(pwd)"/tdk-windows-${{ github.ref_name }}
+
       - name: Build
         run: |
           make
           make install
+
+      - name: Create ZIP Archive
+        run: |
+          zip -r tdk-windows-${{ github.ref_name }}.zip tdk-windows-${{ github.ref_name }}
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: tdk-windows-${{ github.ref_name }}
-          path: tdk-windows-${{ github.ref_name }}
+          path: tdk-windows-${{ github.ref_name }}.zip
           retention-days: 5
 
   build-macos:
@@ -88,11 +100,21 @@ jobs:
           make
           make install
 
+      - name: Create DMG File
+        run: |
+          # Create a temporary directory for mounting
+          mkdir -p /tmp/tdk_dmg
+
+          # Create a disk image
+          hdiutil create -volname "Tcl Dev Kit" -srcfolder "$(pwd)/tdk-macos-${{ github.ref_name }}" \
+                         -ov -format UDZO \
+                         "$(pwd)/tdk-macos-${{ github.ref_name }}.dmg"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: tdk-macos-${{ github.ref_name }}
-          path: tdk-macos-${{ github.ref_name }}
+          path: tdk-macos-${{ github.ref_name }}.dmg
           retention-days: 5
 
   release:
@@ -118,6 +140,6 @@ jobs:
           prerelease: true
           files: |
             tdk-windows-${{ github.ref_name }}.zip
-            tdk-macos-${{ github.ref_name }}.zip
+            tdk-macos-${{ github.ref_name }}.dmg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
