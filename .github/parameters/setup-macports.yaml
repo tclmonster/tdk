@@ -10,4 +10,6 @@ ports:
   - name: automake
   - name: libtool
   - name: openssl
+  - name: ncurses
   - name: curl
+  - name: groff
