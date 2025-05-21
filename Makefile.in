@@ -165,6 +165,7 @@ DECL_WRAP_CMD = wrap_app() { \
 			-anchor "" -relativeto "$(srcdir)" $${TOP_LEVEL_FILES} \
 			$${WRAP_PREFIX_ARG} "$${WRAP_PREFIX_VAL}" \
 			-out "$(top_builddir)/$${OUTPUT}"; \
+	chmod +x "$(top_builddir)/$${OUTPUT}"; \
 }
 
 all: default_apps

@@ -13,16 +13,36 @@ CFLAGS_PERMISSIVE="$CFLAGS -fpermissive -Wno-error=incompatible-function-pointer
 source_dir="$(pwd)"
 build_dir="${source_dir}"/build
 
-exe_ext=.exe
-so_ext=.dll
+host="$(uname -s | tr '[:upper:]' '[:lower:]')"
+kit_version=0.13.10
+tcl_version=8.6.16
+
+exe_ext=
+so_ext=.so
+configure_extra=
+case "$host" in
+    *mingw*)
+        exe_ext=.exe
+        so_ext=.dll
+        sdk_zip_file=libtclkit-sdk-${tcl_version}-x86_64-w64-mingw32.tar.gz
+        tclsh_file=tclkitsh-${tcl_version}-x86_64-w64-mingw32.exe
+    ;;
+    darwin)
+        so_ext=.dylib
+        export CFLAGS="-ObjC $CFLAGS"
+        export CC=${CC:-/usr/bin/clang}
+        export CXX=${CXX:-/usr/bin/clang++}
+        sdk_zip_file=libtclkit-sdk-${tcl_version}-arm64-apple-darwin23.6.0.tar.gz
+        tclsh_file=tclkitsh-${tcl_version}-arm64-apple-darwin23.6.0
+        configure_extra="--enable-aqua --without-x"
+    ;;
+esac
 
 ## Download Tcl/Tk SDK
 ## ------------
 
-kit_version=0.13.10
-tcl_version=8.6.16
 release_url="https://github.com/tclmonster/kitcreator/releases/download"
-sdk_url="${release_url}/${kit_version}/libtclkit-sdk-${tcl_version}-x86_64-w64-mingw32.tar.gz"
+sdk_url="${release_url}/${kit_version}/${sdk_zip_file}"
 sdk_dir="${build_dir}"/libtclkit-sdk-${tcl_version}
 
 if test ! -f "${sdk_dir}"/lib/tclConfig.sh; then
@@ -35,11 +55,28 @@ if test ! -f "${sdk_dir}"/lib/tclConfig.sh; then
     fi
 fi
 
-kit_file="${sdk_dir}"/bin/tclsh.exe
-kit_url="${release_url}/${kit_version}/tclkitsh-${tcl_version}-x86_64-w64-mingw32.exe"
+export TCLKIT_SDK_DIR="${sdk_dir}"
+
+if test "$host" = "darwin"; then
+    # At the moment the KitDLL is not adding MAC_OSX_TK to the TK_DEFS
+    # even when built using --enable-aqua. This is causing a failure
+    # when building Img as TEA_LOAD_TKCONFIG thinks libX11 is required.
+    (
+        . "${sdk_dir}"/lib/tkConfig.sh
+
+        if ! echo "$TK_DEFS" | grep -q 'MAC_OSX_TK'; then
+            sed -i'' -e "s@^TK_DEFS='\(.*\)'@TK_DEFS='\1 -DMAC_OSX_TK'@" \
+                "${sdk_dir}"/lib/tkConfig.sh
+        fi
+    )
+fi
+
+kit_file="${sdk_dir}"/bin/tclsh${exe_ext}
+kit_url="${release_url}/${kit_version}/${tclsh_file}"
 
 if test ! -f "${kit_file}"; then
     curl -L "${kit_url}" -o "${kit_file}"
+    chmod +x "${kit_file}"
 fi
 
 # In case the KitDLL is stored in the lib directory it should
@@ -55,9 +92,12 @@ tcl_lib_dir="${build_dir}"/
 ## ------------
 
 configure() {
+    chmod +x ./configure
     ./configure --prefix="${sdk_dir}" --exec-prefix="${sdk_dir}" \
                 --with-tclinclude="${sdk_dir}"/include --with-tkinclude="${sdk_dir}"/include \
                 --with-tcl="${sdk_dir}"/lib --with-tk="${sdk_dir}"/lib \
+                 --x-includes="${sdk_dir}"/include \
+                ${configure_extra} \
                 "$@"
 }
 
@@ -77,7 +117,7 @@ if test ! -f "${img_dir}"/configure.ac; then
     curl -L "${img_url}" | tar -xz -C build/
 fi
 
-if test ! -f "${sdk_dir}"/lib/Img*/pngtcl*${so_ext}; then
+if test ! -f "${sdk_dir}"/lib/Img*/*tkimgstub*.a; then
     (
         cd "${img_dir}"
         configure --enable-symbols  ;# Without symbols libPNG is crashing?
@@ -142,7 +182,7 @@ if test ! -f "${tktable_dir}"/configure.ac; then
     git clone -b tea-update "${tktable_url}" "${tktable_dir}" || fail 'to clone tktable'
 fi
 
-if test ! -f "${sdk_dir}"/lib/Tktable*/Tktable*${so_ext}; then
+if test ! -f "${sdk_dir}"/lib/Tktable*/*Tktable*${so_ext}; then
     (
         cd "${tktable_dir}"
         export CFLAGS="$CFLAGS_PERMISSIVE"
@@ -165,7 +205,7 @@ if test ! -f "${treectrl_dir}"/configure.ac; then
     git clone -b tea-update "${treectrl_url}" "${treectrl_dir}" || fail 'to clone treectrl'
 fi
 
-if test ! -f "${sdk_dir}"/lib/treectrl*/treectrl*${so_ext}; then
+if test ! -f "${sdk_dir}"/lib/treectrl*/*treectrl*${so_ext}; then
     (
         cd "${treectrl_dir}"
         export CFLAGS="$CFLAGS_PERMISSIVE"
@@ -188,9 +228,10 @@ if test ! -f "${tbcload_dir}"/configure.ac; then
     git clone "${tbcload_url}" "${tbcload_dir}" || fail 'to clone tbcload'
 fi
 
-if test ! -f "${sdk_dir}"/lib/tbcload*/tbcload*${so_ext}; then
+if test ! -f "${sdk_dir}"/lib/tbcload*/*tbcload*${so_ext}; then
     (
         cd "${tbcload_dir}"
+        export CFLAGS="$CFLAGS_PERMISSIVE"
         configure
         ${MAKE:-make}
         ${MAKE:-make} install
@@ -210,9 +251,10 @@ if test ! -f "${tclcompiler_dir}"/configure.ac; then
     git clone "${tclcompiler_url}" "${tclcompiler_dir}" || fail 'to clone tclcompiler'
 fi
 
-if test ! -f "${sdk_dir}"/lib/tclcompiler*/tclcompiler*${so_ext}; then
+if test ! -f "${sdk_dir}"/lib/tclcompiler*/*tclcompiler*${so_ext}; then
     (
         cd "${tclcompiler_dir}"
+        export CFLAGS="$CFLAGS_PERMISSIVE"
         configure
         ${MAKE:-make}
         ${MAKE:-make} install
@@ -232,9 +274,10 @@ if test ! -f "${tclparser_dir}"/configure.ac; then
     git clone "${tclparser_url}" "${tclparser_dir}" || fail 'to clone tclparser'
 fi
 
-if test ! -f "${sdk_dir}"/lib/tclparser*/tclparser*${so_ext}; then
+if test ! -f "${sdk_dir}"/lib/tclparser*/*tclparser*${so_ext}; then
     (
         cd "${tclparser_dir}"
+        export CFLAGS="$CFLAGS_PERMISSIVE"
         configure
         ${MAKE:-make}
         ${MAKE:-make} install
@@ -254,7 +297,7 @@ if test ! -f "${tclx_dir}"/configure.in; then
     git clone "${tclx_url}" "${tclx_dir}" || fail 'to clone tclx'
 fi
 
-if test ! -f "${sdk_dir}"/lib/tclx*/tclx*${so_ext}; then
+if test ! -f "${sdk_dir}"/lib/tclx*/*tclx*${so_ext}; then
     (
         cd "${tclx_dir}"
         configure

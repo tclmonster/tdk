@@ -82,8 +82,9 @@ if {[tk windowingsystem] ne "aqua"} {
     # On OS X put the name into the Menubar as well. Otherwise
     # the name of the interpreter executing the application is
     # used.
-    package require tclCarbonProcesses 1.1
-    carbon::setProcessName [carbon::getCurrentProcess] TclDebugger
+    # TODO: This is obsolete
+    # package require tclCarbonProcesses 1.1
+    # carbon::setProcessName [carbon::getCurrentProcess] TclDebugger
 }
 
 # Specify the additional debugger parameters.

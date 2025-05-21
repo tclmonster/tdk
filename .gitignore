@@ -9,15 +9,15 @@ TclCompiler.tap
 TdkPackages.tap
 DistroPackages.tap
 
-check*
-comp*
-debug*
-inspector*
-lsmfs*
-tape*
-tclapp*
-vfse*
-xref*
+check.tdkapp
+comp.tdkapp
+debug.tdkapp
+inspector.tdkapp
+lsmfs.tdkapp
+tape.tdkapp
+tclapp.tdkapp
+vfse.tdkapp
+xref.tdkapp
 
 *.dll
 *.so
