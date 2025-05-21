@@ -1,9 +1,7 @@
 # Copyright (c) 2024, Bandoti Ltd. and contributors
 # SPDX-License-Identifier: BSD-3-Clause
 # See LICENSE file for details.
-
 name: Build and Release
-
 on:
   workflow_dispatch:
   push:
@@ -22,9 +20,8 @@ on:
       "**/*.h",
       "**/*.c"
     ]
-
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
     defaults:
       run:
@@ -32,7 +29,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Setup MSys2
         uses: msys2/setup-msys2@v2
         with:
@@ -47,12 +43,9 @@ jobs:
             git
             patch
             groff
-
       - name: Build dependencies
         run: |
-          chmod +x ./scripts/build_deps.sh
           ./scripts/build_deps.sh
-
       - name: Configure
         run: |
           ./configure --with-tcl="$(pwd)"/build/libtclkit-sdk-8.6.16/lib \
@@ -62,7 +55,6 @@ jobs:
         run: |
           make
           make install
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -70,22 +62,62 @@ jobs:
           path: tdk-windows-${{ github.ref_name }}
           retention-days: 5
 
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup MacPorts
+        uses: melusina-org/setup-macports@v1
+        with:
+          parameters: '.github/parameters/setup-macports.yaml'
+
+      - name: Build dependencies
+        run: |
+          ./scripts/build_deps.sh
+
+      - name: Configure
+        run: |
+          ./configure --with-tcl="$(pwd)"/build/libtclkit-sdk-8.6.16/lib \
+                      --prefix="$(pwd)"/tdk-macos-${{ github.ref_name }} \
+                      --exec-prefix="$(pwd)"/tdk-macos-${{ github.ref_name }}
+
+      - name: Build
+        run: |
+          make
+          make install
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tdk-macos-${{ github.ref_name }}
+          path: tdk-macos-${{ github.ref_name }}
+          retention-days: 5
+
   release:
-    needs: build
+    needs: [build-windows, build-macos]
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
     steps:
-      - name: Download artifact
+      - name: Download Windows artifact
         uses: actions/download-artifact@v4
         with:
           name: tdk-windows-${{ github.ref_name }}
+
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tdk-macos-${{ github.ref_name }}
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           name:       Release ${{ github.ref_name }}
           draft:      false
-          prerelease: false
-          files:      tdk-windows-${{ github.ref_name }}.zip
+          prerelease: true
+          files: |
+            tdk-windows-${{ github.ref_name }}.zip
+            tdk-macos-${{ github.ref_name }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
